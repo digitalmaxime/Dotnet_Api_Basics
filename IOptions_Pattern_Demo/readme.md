@@ -37,7 +37,20 @@ class MyClass {
 
 ---
 <h2>Validation</h2>
+With `using System.ComponentModel.DataAnnotations;`
+we can annotate the Option class public properties.
+E.g 
+```
+[Required]
+public string Url { get; set; } 
+```
 
+In startup (program.cs) we can ensure that the magically filled in properties are validated.
+```
+builder.Services.AddOptions<WeatherApiOptions>()
+    .Bind(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi))
+    .ValidateDataAnnotations();
+```
 
 ---
 <h2>Rules</h2>

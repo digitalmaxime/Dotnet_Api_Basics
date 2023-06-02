@@ -9,7 +9,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
-builder.Services.Configure<WeatherApiOptions>(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi));
+
+/** Magic happens here **/
+// builder.Services.Configure<WeatherApiOptions>(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi)); <<-- SIMPLE
+builder.Services.AddOptions<WeatherApiOptions>()
+    .Bind(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi))
+    .ValidateDataAnnotations();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
