@@ -1,0 +1,44 @@
+﻿@page "/"
+
+@inject IConfiguration _config;
+
+<h1>AppSettings Values</h1>
+
+<p>
+    MySetting Value: @_mySetting
+</p>
+
+<p>
+    SubSetting Value: @_subSetting
+</p>
+
+<p>
+    ConnectionString Value: @_connectionString
+</p>
+
+<p>
+    Env Mode : @_envMode
+</p>
+
+<p>
+    User Secret mailpassword : @_mailpassword
+</p>
+
+@code {
+
+    string _mySetting = "";
+    string _subSetting = "";
+    string _connectionString  = "not defined";
+    string _envMode = "";
+    string _mailpassword = "";
+
+    protected override void OnInitialized()
+    {
+        _mySetting = _config.GetValue<string>("MySetting");
+        _subSetting = _config.GetValue<string>("MainSetting:SubSetting");
+        _connectionString = _config.GetConnectionString("Default");
+        _envMode = _config.GetValue<string>("ASPNETCORE_ENVIRONMENT");
+        _mailpassword = _config.GetValue<string>("mailpassword");
+    }
+
+}
