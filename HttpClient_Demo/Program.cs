@@ -1,3 +1,5 @@
+using HttpClient_Demo;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddHttpClient("weather-consumer", c =>
+builder.Services.AddHttpClient<IWeatherService, WeatherService>(c =>
 {
     c.BaseAddress = new Uri("http://api.weatherapi.com/v1/current.json");
 });
