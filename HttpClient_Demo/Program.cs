@@ -7,6 +7,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpClient("weather-consumer", c =>
+{
+    c.BaseAddress = new Uri("http://api.weatherapi.com/v1/current.json");
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -8,43 +8,31 @@ public class WeatherForecastController : ControllerBase
 {
 
     private readonly ILogger<WeatherForecastController> _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
     private static HttpClient? _httpClient;
     public WeatherForecastController(
-        ILogger<WeatherForecastController> logger
+        ILogger<WeatherForecastController> logger,
+        IHttpClientFactory httpClientFactory
         )
     {
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
     }
 
-    // static WeatherForecastController()
-    // {
-    //     _httpClient = new HttpClient();
-    // }
     
     [HttpGet(Name = "GetWeatherForecast")]
     public async Task<string> Get(string cityName)
     {
-        var URL = $"http://api.weatherapi.com/v1/current.json?key=64102e915c694dcfae4171920230106&q={cityName}&aqi=no";
-        
-        /*** Basic Solution that may lead to Socket exhaustion problem, no more httpClient may be create after a while ***/
-        // using (var httpClient = new HttpClient())
-        // {
-        //     var response = await httpClient.GetAsync(URL);
-        //     return await response.Content.ReadAsStringAsync();
-        // }
+        var URL = $"?key=64102e915c694dcfae4171920230106&q={cityName}&aqi=no";
 
-        var response = await GetHttpClient().GetAsync(URL);
+        var httpClient = _httpClientFactory.CreateClient("weather-consumer");
+        var response = await httpClient.GetAsync(URL);
+        Console.WriteLine();
+        Console.WriteLine();
+        Console.WriteLine(response.Headers.Location);
+        Console.WriteLine();
+        Console.WriteLine();
         return await response.Content.ReadAsStringAsync();
     }
 
-    public static HttpClient GetHttpClient()
-    {
-        if (_httpClient == null)
-        {
-            _httpClient = new HttpClient();
-            Console.WriteLine("\n\n\n Created a new HttpClient\n\n\n");
-        }
-    
-        return _httpClient;
-    }
 }
