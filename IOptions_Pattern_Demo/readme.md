@@ -1,5 +1,6 @@
 <h2>IOptions </h2>
 Magic code in startup (program.cs)
+
 ```
 builder.Services
     .Configure<WeatherApiOptions>(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi));
@@ -13,7 +14,7 @@ This will have options recomputed on every request.
 Therefore, it will pickup changes in the appSettings.json without having to rebuild the app.
 It cannot be injected into a Singleton service)_
 
-Nice so it allows for DI the an instance with properties populated from appsettings.json config file!
+Nice, so it allows for DI the an instance with properties populated from appsettings.json config file!
 
 Next up, inject IOptions through regular DI
 ```
@@ -37,7 +38,10 @@ class MyClass {
 
 ---
 <h2>Validation</h2>
-With `using System.ComponentModel.DataAnnotations;`
+With 
+
+`using System.ComponentModel.DataAnnotations;`
+
 we can annotate the Option class public properties.
 E.g 
 ```
