@@ -10,8 +10,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 
+
 /** Magic happens here **/
-// builder.Services.Configure<WeatherApiOptions>(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi)); <<-- SIMPLE
+// builder.Services.Configure<WeatherApiOptions>(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi));// <<-- SIMPLE
 builder.Services.AddOptions<WeatherApiOptions>()
     .Bind(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi))
     .ValidateDataAnnotations();
@@ -30,5 +31,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapGet("/", () => "Check out the \"/\"swagger documentation!");
 app.Run();
