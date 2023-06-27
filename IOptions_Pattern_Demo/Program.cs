@@ -31,5 +31,13 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
 app.MapGet("/", () => "Check out the \"/\"swagger documentation!");
+
+app.MapGet("/{id}", async context =>
+        {
+            // Get one todo item
+            await context.Response.WriteAsJsonAsync(new { Message = "One todo item" });
+        });
+
 app.Run();
