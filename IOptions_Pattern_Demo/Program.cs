@@ -12,7 +12,8 @@ builder.Services.AddHttpClient();
 
 
 /** Magic happens here **/
-// builder.Services.Configure<WeatherApiOptions>(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi));// <<-- SIMPLE
+// builder.Services
+//        .Configure<WeatherApiOptions>(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi));// <<-- SIMPLE
 builder.Services.AddOptions<WeatherApiOptions>()
     .Bind(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi))
     .ValidateDataAnnotations();

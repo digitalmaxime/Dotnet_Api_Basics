@@ -2,6 +2,6 @@
 bin/
 obj/
 Debug/
-.idea/*
+.idea/
 Migrations/
 .vscode/

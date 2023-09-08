@@ -5,6 +5,20 @@ Magic code in startup (program.cs)
 builder.Services
     .Configure<WeatherApiOptions>(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi));
 ```
+or 
+```
+[ExcludeFromCodeCoverage]
+public static class ServiceCollectionExtensions
+{
+	public static IServiceCollection ConfigureServiceCollectionAppServices(
+		this IServiceCollection services, 
+		IConfiguration configuration,
+		IHostEnvironment environment)
+	{
+		var endpointOptions = configuration
+			.GetSection(OptionSectionName.Endpoints)
+			.Get<EndpointOptions>();
+```
 
 Above code works like `AddSingleton` but fills in the properties `{get; set;}`
 with elements found in `Configuration.GetSection(..)`.
