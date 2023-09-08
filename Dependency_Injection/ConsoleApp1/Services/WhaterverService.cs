@@ -1,6 +1,6 @@
 ﻿namespace ConsoleApp1.Services;
 
-public class WhaterverService : IWhateverService
+public class WhateverService : IWhateverService
 {
     public void LogHello()
     {
