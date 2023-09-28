@@ -12,6 +12,7 @@ Order of setting sources :
 
 
 <h2>User Secrets</h2>
+
 ```
 dotnet user-secrets init
 
@@ -23,11 +24,13 @@ dotnet user-secrets set mailpassword password1
 ## Getting configs through builder.Configuration
 
 <h5>.GetValue<string></h5>
+
 ```
 var validIssuerConfig = builder.Configuration.GetValue<string>("Security:ValidIssuer"); // Using nested Json 
 ```
 
 <h5>["myConfig"]</h5>
+
 ```
 var defaultLogLevel = builder.Configuration["Logging:LogLevel:Default"];
 ```
@@ -54,5 +57,13 @@ var positionOptions = new PositionOptions();
                        $"Name: {positionOptions.Name}");
 ```
 
+or
+
+```
+builder.Services.AddOptions<MySettings>().Bind(configuration.GetSection("MySettings1"));
+```
+
 ---
 ref : [microsoft doc](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-7.0)
+
+ref : [microsoft config](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-7.0&viewFallbackFrom=aspnetcore-2.2#environment-variables-configuration-provider)

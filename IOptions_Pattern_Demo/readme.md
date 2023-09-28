@@ -1,11 +1,21 @@
 <h2>IOptions </h2>
 Magic code in startup (program.cs)
 
+
+Recommended :
+```
+builder.Services.AddOptions<MySettings>().Bind(configuration.GetSection("MySettings1"));
+```
+
+or
+
 ```
 builder.Services
     .Configure<WeatherApiOptions>(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi));
 ```
-or 
+
+or
+
 ```
 [ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions
