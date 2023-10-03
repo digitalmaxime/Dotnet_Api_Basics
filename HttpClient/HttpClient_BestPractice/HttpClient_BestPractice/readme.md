@@ -9,6 +9,34 @@
 When the factory is called to create an instance of HttpClient the underlying HttpClientHandler is taken from a pool
 Handlers exist in the pool for a default of 2 minutes before they are disposed
 
+Using the factory, you can instantiate and configure as many light HttpClients as you need
+since they use one of the pooled HttpMessageHandlers managed by the factory.
+
+```
+// Program.cs
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHttpClient();
+
+// ItemService.cs
+
+public class ItemService
+{
+    private readonly HttpClient _client;
+
+    public ItemService(IHttpClientFactory clientFactory)
+    {
+        _client = clientFactory.CreateClient();
+        _client.BaseAddress = new Uri("http://localhost:5266/");
+    }
+
+    public async Task<Item?> GetItem(int id)
+    {
+        return await _client.GetFromJsonAsync<Item>($"items/{id}");
+    }
+}
+```
+
 ## Use SendAsync
 This method allows you to create a particular request object (HttpRequestMessage) that is then passed to the method.
 
