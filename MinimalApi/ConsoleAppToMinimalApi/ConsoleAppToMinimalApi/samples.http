@@ -1,0 +1,24 @@
+### Hello text
+GET http://localhost:5000/hello
+
+### Hello helloobj
+GET http://localhost:5000/helloobj
+
+### Hello user (record)
+GET http://localhost:5000/user
+
+### Hello special (accessing Query )
+GET http://localhost:5000/special?age=33
+Accept: application/json
+
+
+# --- Post ---
+
+### Parameter Extavaganza
+POST http://localhost:5000/extra/1988/?age=34&gender=male
+Accept: application/json
+Content-Type: application/json
+
+{
+  "fullName": "Maxime Tremblay-Rheault"
+}
