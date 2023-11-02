@@ -17,6 +17,8 @@ builder.Services.AddHttpClient();
 builder.Services.AddOptions<WeatherApiOptions>()
     .Bind(builder.Configuration.GetSection(WeatherApiOptions.WeatherApi))
     .ValidateDataAnnotations();
+builder.Services.AddOptions<CityOption>()
+    .Bind(builder.Configuration.GetSection(CityOption.cityOption));
 
 var app = builder.Build();
 
