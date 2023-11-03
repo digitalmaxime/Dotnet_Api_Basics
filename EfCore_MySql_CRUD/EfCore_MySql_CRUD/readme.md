@@ -35,3 +35,31 @@
     - `builder.Services.AddSwaggerGen();`
     - `app.UseSwagger();`
     - `app.UseSwaggerUI();`
+
+<h2>Adding DbContext</h2>
+
+Create a Context the implements `: DbContext`
+
+`public PersonContext(DbContextOptions<PersonContext> options) : base(options)`
+
+Link up entities
+
+`public DbSet<Person> Persons => Set<Person>(); // Entity set for Entity 'Person'`
+
+Register the context
+
+``
+builder.Services.AddDbContext<ApplicationDbContext>(
+options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
+``
+
+** *By default the lifetime of dbContext is 'scoped'*
+
+
+<h2>Ef Migrations</h2>
+
+Run ef migrations
+
+`dotnet ef migrations add init`
+
+`dotnet ef database update`
