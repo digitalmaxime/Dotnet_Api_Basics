@@ -1,7 +1,8 @@
+using System.Net;
 using EfCore_MySql_CRUD.Domain;
 using EfCore_MySql_CRUD.Infrastructure;
+using EfCore_MySql_CRUD.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace EfCore_MySql_CRUD.Api;
 
@@ -18,16 +19,30 @@ public class PersonController : ControllerBase
 
     [HttpGet]
     [Route("person/{id}")] // Path param style
-    public async Task<Person> GetPersonById(int id)
+    public async Task<ActionResult<Person>> GetPersonById(int id)
     {
-        return await Task.FromResult(new Person() { Id = id });
+        var res = await _personRepository.GetPersonById(id);
+        if (res == null)
+        {
+            return NotFound($"Did not find any person with id : {id}");
+        }
+
+        return Ok(res);
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(Person), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Route("person/name")] // Query param style
-    public async Task<Person> GetPersonByName(string name)
+    public async Task<ActionResult<Person>> GetPersonByName(string name)
     {
-        return await Task.FromResult(new Person() { Id = -1, Name = name });
+        var res = await _personRepository.GetPersonByName(name);
+        if (res == null)
+        {
+            return NotFound($"Did not find any person with name : {name}");
+        }
+
+        return Ok(res);
     }
 
     [HttpPost]
@@ -42,5 +57,31 @@ public class PersonController : ControllerBase
         }
 
         return Ok(res);
+    }
+
+    [HttpDelete]
+    [Route("person")]
+    public async Task<IActionResult> DeletePerson(int id)
+    {
+        var res = await _personRepository.DeletePersonById(id);
+        if (res == null)
+        {
+            return NotFound($"Error creating person with id {id}");
+        }
+
+        return Ok(new { Message = $"Successfully delete person with id {id}", Entity = res });
+    }
+    
+    [HttpPatch]
+    [Route("person")]
+    public async Task<IActionResult> ModifyPerson(int id, string name)
+    {
+        var res = await _personRepository.UpdatePerson(id, name);
+        if (res == null)
+        {
+            return NotFound($"Error modifying person with id {id}");
+        }
+
+        return Ok(new { Message = $"Successfully modified person with id {id}", ModifiedPerson = res });
     }
 }

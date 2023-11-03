@@ -1,3 +1,4 @@
+using System.Reflection;
 using EfCore_MySql_CRUD.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,11 @@ public class PersonContext: DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        // modelBuilder.ApplyConfiguration(new PersonFluentMapping());
+        // modelBuilder.Entity<Person>().HasKey(t => t.Id);
+
         base.OnModelCreating(modelBuilder);
     }
     

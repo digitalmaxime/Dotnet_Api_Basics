@@ -1,7 +1,7 @@
 using EfCore_MySql_CRUD.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace EfCore_MySql_CRUD.Infrastructure;
+namespace EfCore_MySql_CRUD.Infrastructure.Repositories;
 
 public interface IPersonRepository
 {
@@ -9,6 +9,7 @@ public interface IPersonRepository
     Task<Person?> GetPersonById(int personId);
     Task<Person?> DeletePersonById(int personId);
     Task<Person?> UpdatePerson(int personId, string name);
+    Task<Person?> GetPersonByName(string name);
 }
 
 public class PersonRepository : IPersonRepository
@@ -35,6 +36,11 @@ public class PersonRepository : IPersonRepository
     public async Task<Person?> GetPersonById(int personId)
     {
         return await _context.FindAsync<Person>(personId);
+    }
+
+    public async Task<Person?> GetPersonByName(string name)
+    {
+        return await _context.Person.Where(x => x.Name == name).FirstOrDefaultAsync();
     }
 
     public async Task<Person?> DeletePersonById(int personId)
