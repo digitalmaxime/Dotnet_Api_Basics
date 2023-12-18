@@ -1,0 +1,17 @@
+# https://github.com/confluentinc/cp-all-in-one/blob/7.2.1-post/cp-all-in-one/docker-compose.yml
+# https://medium.com/@saabeilin/kafka-hands-on-part-i-development-environment-fc1b70955152
+
+--- # docker compose -p dishappdatabase up --detach 
+version: '3'
+name: "dishappdatabase"
+services:
+  mysql-db:
+    image: nxrm.corp.bdc.ca:4445/library/mysql:8.0
+    restart: always
+    expose:
+      - 3306
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mysql-db
