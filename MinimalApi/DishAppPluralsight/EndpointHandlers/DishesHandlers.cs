@@ -12,8 +12,9 @@ namespace DishAppPluralsight.EndpointHandlers;
 public static class DishesHandlers
 {
     public static async Task<Ok<IEnumerable<DishDto>>> GetDishesAsync(
-        DishesDbContext dishesDbContext, ClaimsPrincipal claim, IMapper mapper, [FromQuery] string? name)
+        DishesDbContext dishesDbContext, ClaimsPrincipal claim, IMapper mapper, ILogger<DishDto> logger, [FromQuery] string? name)
     {
+        logger.LogInformation("Getting the dishes..");
         Console.WriteLine($"\nUser authenticated ? {claim?.Identity?.IsAuthenticated}\n");
 
         return TypedResults.Ok(mapper.Map<IEnumerable<DishDto>>(await dishesDbContext.Dishes
