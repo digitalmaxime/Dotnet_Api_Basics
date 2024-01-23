@@ -38,6 +38,12 @@ public class WeatherForecastController : ControllerBase
         var baseUrl = _weatherOptions.Url;
         string? key = _weatherOptions.Key;
         
+        using var toto = _cityOption.GetEnumerator();
+        foreach (var city in _cityOption)
+        {
+            var c = city;
+        }
+        
         var url = $"{baseUrl}?key={key}&q={cityName}&aqi=no";
         Console.WriteLine($"\n\n\nUrl : {url}\n\n\n");
         using var httpClient = _httpClientFactory.CreateClient();

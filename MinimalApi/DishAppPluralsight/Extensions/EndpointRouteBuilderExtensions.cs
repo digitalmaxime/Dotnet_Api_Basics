@@ -20,7 +20,8 @@ public static class EndpointRouteBuilderExtensions
             .WithOpenApi()
             .WithSummary("Get a dish by providing an id.")
             .WithDescription("Dishes are identified by a URI containing a dish identifier. This identifier is a GUID. You can get one specific dish via this endpoint by providing the identifier.");
-        dishesEndpoints.MapGet("/{dishName}", DishesHandlers.GetDishByNameAsync).AllowAnonymous()
+        dishesEndpoints.MapGet("/{dishName}", DishesHandlers.GetDishByNameAsync)
+            .AllowAnonymous()
             .WithOpenApi(operation =>
             {
                 operation.Deprecated = true;

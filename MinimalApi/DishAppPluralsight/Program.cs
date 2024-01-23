@@ -4,6 +4,7 @@ using DishAppPluralsight.Models;
 using DishAppPluralsight.Validators;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +20,8 @@ builder.Services.AddDbContext<DishesDbContext>(
 
 /*** Add Authentication + Authorization ***/
 builder.Services.AddAuthentication().AddJwtBearer();
-    // nuget Microsoft.AspNetCore.Authentication.JwtBearer
-    // Options can be set with .AddJwtBearer(opt => ...) but they can also be set through appSettings.json "Authentication": {...}
+// nuget Microsoft.AspNetCore.Authentication.JwtBearer
+// Options can be set with .AddJwtBearer(opt => ...) but they can also be set through appSettings.json "Authentication": {...}
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthorizationBuilder()
@@ -30,8 +31,32 @@ builder.Services.AddAuthorizationBuilder()
             .RequireClaim("country", "Belgium"));
 
 /*** Add Documentation ***/
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer(); // Expose meta data about our application
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("TokenAuthNZ", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Description = "Token-based authentication and authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        In = ParameterLocation.Header
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme()
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "TokenAuthNZ"
+                }
+            },
+            new List<string>()
+        }
+    });
+}); // through the generated meta data, SwaggerGen creates UI
 
 var app = builder.Build();
 
@@ -69,7 +94,7 @@ using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().Create
 }
 
 /*** Swagger ***/
-app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwagger(); // Generates OpenApi specification
+app.UseSwaggerUI(); // Enables the documentation UI
 
 app.Run();
