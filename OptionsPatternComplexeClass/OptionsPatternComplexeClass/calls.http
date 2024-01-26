@@ -1,0 +1,5 @@
+### HttpSecurityClient
+GET http://localhost:5000/
+
+### Systems
+GET http://localhost:5000/systems
