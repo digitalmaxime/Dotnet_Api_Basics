@@ -56,7 +56,53 @@ options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
 ** *By default the lifetime of dbContext is 'scoped'*
 
 
-<h2>Ef Migrations</h2>
+<h2>Ef Core Fluent Mapping</h2>
+
+```
+public class PersonContext : DbContext
+{
+    // Specify DbSet properties etc
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Person>().Property(t => t.Id).HasColumnName("PersonId");
+    }
+}
+```
+
+#### Separate Configuration Classes
+
+```
+public class PersonFluentMapping : IEntityTypeConfiguration<Person>
+{
+
+        public void Configure(EntityTypeBuilder<Person> builder)
+        {
+            throw new NotImplementedException();
+        }
+}
+```
+
+the, add
+```
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+  modelBuilder.ApplyConfiguration(new PersonFluentMapping());
+}
+```
+
+or, simply add `ApplyConfigurationsFromAssembly` to get all implementations of IEntityTypeConfiguration
+
+```
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+  modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+}
+```
+
+ref : [link](https://www.learnentityframeworkcore.com/configuration/fluent-api)
+
+
+<h2>Ef Core Migrations</h2>
 
 Run ef migrations
 
