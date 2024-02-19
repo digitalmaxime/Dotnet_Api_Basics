@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 // ------------------------------------> Builder :)
 var builder = WebApplication.CreateBuilder(args);
+
 // <------------------------------------ Builder :)
 
 builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
@@ -16,9 +17,22 @@ var app = builder.Build();
 app.MapGet("hello", () => "hello from miniapi :)");
 
 // Return Obj
-app.MapGet("helloobj", () => new
+app.MapGet("helloobj", () =>
 {
-    Message = "My Obj Message :)"
+    Console.WriteLine("ALSKDJALSKDJASLDKJ");
+    return new
+    {
+        speakers = new[]
+        {
+            new
+            {
+                id = 1,
+                name = "momo",
+                bio = "Bar tender",
+                Message = "My Obj Message :)"
+            }
+        }
+    };
 });
 
 // "Results" in IResultExtensions Microsoft.AspNetCore.Http>Results.Extensions
@@ -27,25 +41,26 @@ app.MapGet("user", () => Results.Ok(new User("Max")));
 // Accessing the params (Http Context)
 app.MapGet("context", (HttpContext context) => { return context.Request.Headers.RequestId; });
 
-
 // Accessing the params (Http Request)
 app.MapGet("special",
-    async (HttpRequest req, HttpResponse res) =>
-    {
-        await res.WriteAsJsonAsync(req.Query);
-    });
+    async (HttpRequest req, HttpResponse res) => { await res.WriteAsJsonAsync(req.Query); });
 
 // POST
 app.MapPost("extra/{year:int}", (
     int year, // Path Parameter
-    int age,  // Query Parameter (default)
-    [FromQuery(Name = "gender")]string sex,
-    [FromHeader]string accept, // Header 
+    int age, // Query Parameter (default)
+    [FromQuery(Name = "gender")] string sex,
+    [FromHeader] string accept, // Header 
     User user, // Body (record)
     IDateTimeProvider dateTimeProvider // DI Service
-    ) => new
+) => new
 {
-    year, age, sex, accept, user, dateTimeProvider.Now
+    year,
+    age,
+    sex,
+    accept,
+    user,
+    dateTimeProvider.Now
 });
 
 app.Run();

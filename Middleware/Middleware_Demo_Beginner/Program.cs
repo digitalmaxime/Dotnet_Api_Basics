@@ -15,12 +15,15 @@ app.Use(async (ctx, next) =>
     await next();
 });
 
-app.Run(async (context) => // This prevents app.Map from being executed, why?
-{
-    System.Console.WriteLine("\n\nin App Run()..");
+app.MapGet("/hello", () => "Hello from minimalApi!");
+
+app.Run();
+// app.Run(async (context) => // This prevents app.Map from being executed, why?
+// {
+//     System.Console.WriteLine("\n\nin App Run()..");
     
-    await context.Response.WriteAsync("app Run()...");
-});
+//     await context.Response.WriteAsync("app Run()...");
+// });
 
 
 

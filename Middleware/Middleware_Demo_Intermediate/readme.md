@@ -10,6 +10,7 @@ app.Run(async (context) => {
 Nothing is executed beyond this point
 
 <h3>app.Use()</h3>
+
 ```
 app.Use(async (context, next) => {
     await context.Response.WriteAsync("<html><body>Response from First mildleware</body></html>");
@@ -33,7 +34,9 @@ app.UseWhen(ctx => ctx.Request.Query.ContainsKey("role"), appBuilder =>
 ```
 
 <h3>app.Map()</h3>
+
 Creates a branch in the request pipeline based on matches of the given request path
+
 ```
 app.Map("/somePath", appBuilder => {
     appBuilder.Run(async ctx => {
@@ -57,7 +60,8 @@ app.Map("/root", appBuilder =>
                 });
                 ...
 ```
-Here, when a patch is matched by `Map`, it becomes the `PathBase`.
+Here, when a path is matched by `Map`, it becomes the `PathBase`.
 
 <h5>app.MapWhen()</h5>
+
 Conditionally creates a branch in the request pipeline that **does'nt return to the main pipeline.**

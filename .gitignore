@@ -5,3 +5,4 @@ Debug/
 .idea/
 Migrations/
 .vscode/
+.DS_Store
