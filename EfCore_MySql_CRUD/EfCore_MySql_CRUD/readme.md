@@ -12,7 +12,7 @@
 
 ``dotnet add package Microsoft.EntityFrameworkCore``
 
-``dotnet add package  MySql.EntityFrameworkCore ``
+``dotnet add package  MySql.EntityFrameworkCore``
 
 <h2>Swagger Dependencies</h2>
 
