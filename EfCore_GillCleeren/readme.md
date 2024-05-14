@@ -9,9 +9,9 @@ POCOS _plain old CLR objects_
 
 ## Implementation steps
 1) [Define the model classes](#model)
-2) [Add required pacakges](#packages)
+2) [Add required packages](#packages)
 3) [Create the database context and DbSets](#context)
-4) [Overriding the conventions with FluentApi](#FluentApi)
+4) [Overriding the conventions with FluentApi](#fluentapi)
 5) [Configure the application to use EF Core](#configure)
 6) [Add connection string](#Connection-String)
 7) [Migrations](#migrations)
