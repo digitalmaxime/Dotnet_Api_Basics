@@ -82,7 +82,7 @@ public class PersonFluentMapping : IEntityTypeConfiguration<Person>
 }
 ```
 
-the, add
+then add
 ```
 protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
