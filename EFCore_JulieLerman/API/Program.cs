@@ -1,3 +1,4 @@
+using EFCore_JulieLerman;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Persistence.Extensions;
@@ -12,9 +13,10 @@ if(app.Environment.IsEnvironment("Development"))
 {
     using var serviceScope = app.Services.CreateScope();
     var context = serviceScope.ServiceProvider.GetRequiredService<LibraryContext>();
-    // await context.Database.EnsureCreatedAsync();
     context.Database.Migrate();
 }
+
+app.MapAuthorEndpoints();
 
 app.MapGet("/", () => "Hello World!");
 
