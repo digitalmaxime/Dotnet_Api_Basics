@@ -1,0 +1,39 @@
+using Domain;
+using Microsoft.EntityFrameworkCore;
+
+namespace Persistence.Extensions;
+
+public static class SeedDataExtension
+{
+    public static void SeedData(this ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Author>().HasData(new List<Author>()
+        {
+            new()
+            {
+                Id = 1,
+                Name = "Author 1"
+            },
+        });
+        
+        modelBuilder.Entity<Book>().HasData(new List<Book>()
+        {
+            new Book()
+            {
+                Id = 1,
+                Title = "Book 123",
+                AuthorId = 1
+            }
+        });
+        
+        modelBuilder.Entity<Cover>().HasData(new List<Cover>()
+        {
+            new Cover()
+            {
+                Id = 1,
+                DesignIdeas = "Design ideas for Book 1",
+                BookId = 1
+            }
+        });
+    }
+}
