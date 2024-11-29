@@ -11,5 +11,7 @@ public class AuthorEntityTypeConfiguration : IEntityTypeConfiguration<Author>
         builder
             .HasMany<Book>()
             .WithOne(b => b.Author);
+
+        builder.Property<DateTimeOffset>("LastUpdated");
     }
 }

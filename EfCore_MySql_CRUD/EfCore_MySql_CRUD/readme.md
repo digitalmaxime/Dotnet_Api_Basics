@@ -4,8 +4,6 @@
 
 <h2>Connect to MySql with Workbench client</h2>
 
-
-
 <h2>EfCore Dependencies</h2>
 
 ``dotnet add package Microsoft.EntityFrameworkCore.Design``

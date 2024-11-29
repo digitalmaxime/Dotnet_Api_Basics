@@ -17,6 +17,14 @@ public class LibraryContext : DbContext
         modelBuilder.SeedData();
     }
     
+    public override int SaveChanges()
+    {
+        foreach (var entity in ChangeTracker.Entries<Author>())
+        {
+            entity.Property("LastUpdated").CurrentValue = DateTimeOffset.Now;
+        }
+        return base.SaveChanges();
+    }
     
     public DbSet<Book> Books { get; set; }
     public DbSet<Cover> Covers { get; set; }

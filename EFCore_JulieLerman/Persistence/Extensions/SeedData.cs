@@ -7,15 +7,13 @@ public static class SeedDataExtension
 {
     public static void SeedData(this ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Author>().HasData(new List<Author>()
+        modelBuilder.Entity<Author>().HasData(new
         {
-            new()
-            {
-                Id = 1,
-                Name = "Author 1"
-            },
+            Id = 1,
+            Name = "Author 1",
+            LastUpdated = DateTimeOffset.Now
         });
-        
+
         modelBuilder.Entity<Book>().HasData(new List<Book>()
         {
             new Book()
@@ -25,7 +23,7 @@ public static class SeedDataExtension
                 AuthorId = 1
             }
         });
-        
+
         modelBuilder.Entity<Cover>().HasData(new List<Cover>()
         {
             new Cover()
