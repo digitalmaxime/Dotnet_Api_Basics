@@ -1,0 +1,25 @@
+# docker compose up --detach
+version: '3'
+services:
+
+  postgress-db:
+    container_name: Postgres-JWT-Demo-Container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: maxou
+      POSTGRES_PASSWORD: password!123
+      POSTGRES_DB: NetRefreshTokenDemo
+    volumes:
+      - ./postgres_data:/var/lib/postgresql
+    ports:
+       - 5432:5432
+ 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+ 
+volumes:
+  pgdata:
