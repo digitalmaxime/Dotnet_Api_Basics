@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Net9RefreshTokenDemo.Api.Data;
 using Net9RefreshTokenDemo.Api.Models;
+using Net9RefreshTokenDemo.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,8 @@ builder.Services.AddAuthentication(options =>
          };
      }
     );
+
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddControllers();
 
