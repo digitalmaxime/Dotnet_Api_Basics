@@ -7,25 +7,35 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddAuthentication()
-    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme);
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        /*
+        *  "dotnet user-jwts create" encodes the signin key in base64
+        */
+        byte[] secretKeyBytes = Convert.FromBase64String("yBciNkH+sX6KOCTEHQOCTjgQ26YrP+olt2RJuDCE1Rc=");
 
-builder.Services.AddAuthorization(options => {
-    options.AddPolicy("AdminScope", policy => {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateLifetime = true
+        };
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminScope", policy =>
+    {
         policy.RequireClaim("scope", "admin");
     });
 });
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseSwagger();
-app.UseSwaggerUI();
-
 
 app.UseHttpsRedirection();
 
