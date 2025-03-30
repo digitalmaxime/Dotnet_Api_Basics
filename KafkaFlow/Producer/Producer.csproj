@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="KafkaFlow" Version="3.1.0" />
+      <PackageReference Include="KafkaFlow.LogHandler.Console" Version="3.1.0" />
+      <PackageReference Include="KafkaFlow.Microsoft.DependencyInjection" Version="3.1.0" />
+      <PackageReference Include="KafkaFlow.Serializer.JsonCore" Version="3.1.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
+    </ItemGroup>
+
+</Project>
