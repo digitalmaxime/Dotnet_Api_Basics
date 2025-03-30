@@ -5,7 +5,7 @@ builder.Services.AddTransient<ConsoleLoggerMiddleware>();
 var app = builder.Build();
 
 app.Map("/map", MapHandler.Handle);
-app.Map("/favicon.ico", () => {});
+app.Map("/favicon.ico", () => { });
 
 app.UseMiddleware<ConsoleLoggerMiddleware>();
 
@@ -15,21 +15,19 @@ app.Use(async (ctx, next) =>
     await next();
 });
 
-app.MapGet("/hello", () => "Hello from minimalApi!");
+app.MapGet("/hello", () => { Console.WriteLine("Hello"); return "Hello from minimalApi!"; });
+app.Map("/somepath", async context =>
+{
+    System.Console.WriteLine("\n\nin App Map()..");
+    await context.Response.WriteAsync("app Map()...");
+});
+
+// Ensure app.Run is the last middleware
+// app.Run();
+app.Run(async (context) =>
+{
+    System.Console.WriteLine("\n\nin App Run()..");
+    await context.Response.WriteAsync("app Run()...");
+});
 
 app.Run();
-// app.Run(async (context) => // This prevents app.Map from being executed, why?
-// {
-//     System.Console.WriteLine("\n\nin App Run()..");
-    
-//     await context.Response.WriteAsync("app Run()...");
-// });
-
-
-
-
-
-app.Run();
-
-
-
