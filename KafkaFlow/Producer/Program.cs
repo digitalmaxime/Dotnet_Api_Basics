@@ -45,7 +45,6 @@ services.AddKafka(
                                 new JsonSerializerConfig
                                 {
                                     SubjectNameStrategy = SubjectNameStrategy.TopicRecord,
-                                    
                                 });
                         })
                 )
@@ -59,9 +58,7 @@ var producer = serviceProvider
     .GetProducer(producerName);
 
 await producer.ProduceAsync(
-    topicName,
-    Guid.NewGuid().ToString(),
-    new HelloMessage { Text = "Hello from Json Schema!" });
+    topicName, Guid.NewGuid().ToString(), new HelloMessage { Text = "Hello from Json Schema!" });
 
 
 Console.WriteLine("Message sent!");

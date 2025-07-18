@@ -134,4 +134,4 @@ CLI `dotnet ef migrations add` and  `dotnet ef database update`
 
 ## Database
 
-to connect to localdb use `(localdb)\MSSQLLocalDBwith` Windows Auth
+to connect to localdb use `(localdb)\MSSQLLocalDB` Windows Auth

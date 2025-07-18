@@ -30,7 +30,8 @@ public static class SeedDataExtension
             {
                 Id = 1,
                 DesignIdeas = "Design ideas for Book 1",
-                BookId = 1
+                BookId = 1,
+                DesignIdeaArray = new List<string> { "Idea 1", "Idea 2", "Idea 3" }
             }
         });
     }

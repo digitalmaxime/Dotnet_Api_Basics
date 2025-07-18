@@ -20,6 +20,7 @@ public class Cover
 {
     public int Id { get; init; }
     public string DesignIdeas { get; set; } = string.Empty;
+    public List<string> DesignIdeaArray { get; set; } = new List<string>();
     public int BookId { get; init; }
     public Book? Book { get; init; }
 }

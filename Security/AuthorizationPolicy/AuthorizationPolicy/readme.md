@@ -1,0 +1,1 @@
+reference https://medium.com/@athanbonis/securing-your-net-minimal-api-with-json-web-tokens-jwt-43cc9b0bd8d4

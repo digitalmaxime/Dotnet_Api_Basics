@@ -31,6 +31,8 @@ public class BookRepository : IBookRepository
     
     public async Task<Book?> GetBookByTitleAsync(string title)
     {
-        return await _context.Books.FirstOrDefaultAsync(b => b.Title == title);
+        return await _context.Books
+            .Include(x => x.Cover)
+            .FirstOrDefaultAsync(b => b.Title == title);
     }
 }
