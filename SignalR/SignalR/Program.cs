@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.SignalR;
+using SignalR;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,9 +14,14 @@ builder.Services.AddCors(options =>
         {
             builder.WithOrigins("http://localhost:4200") // Angular default dev port
                    .AllowAnyHeader()
-                   .AllowAnyMethod();
+                   .AllowAnyMethod()
+                   .AllowCredentials();
         });
 });
+
+builder.Services.AddControllers();
+builder.Services.AddSignalR();
+builder.Services.AddHostedService<WeatherUpdateService>();
 
 var app = builder.Build();
 
@@ -42,6 +51,10 @@ app.MapGet("/api/weatherforecast", () =>
     })
     .WithName("GetWeatherForecast")
     .WithOpenApi();
+
+app.MapHub<RealTimeHub>("/realtimehub");
+app.MapControllers();
+
 
 app.MapFallbackToFile("index.html"); // if nothing else matches this request, send back index.html and let Angular handle it
 

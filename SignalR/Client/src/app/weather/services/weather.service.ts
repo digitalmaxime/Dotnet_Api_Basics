@@ -14,7 +14,7 @@ export class WeatherService {
   getWeather(): Observable<WeatherModel[]> {
     return this.http
       .get<WeatherModelShared[]>(this.apiUrl)
-      .pipe(map(sharedModels => sharedModels.map(shared => this.mapToWeatherModel(shared))),
+      .pipe(map(weather => weather.map(shared => this.mapToWeatherModel(shared))),
         catchError(error => {
           console.error('Error fetching weather data:', error);
           return of([]);
@@ -22,7 +22,7 @@ export class WeatherService {
       );
   }
 
-  private mapToWeatherModel(shared: WeatherModelShared): WeatherModel {
+  public mapToWeatherModel(shared: WeatherModelShared): WeatherModel {
     return {
       city: shared.city || "Montreal",
       state: shared.state || "Quebec",

@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10"/>
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="9.0.7" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
     </ItemGroup>
 
@@ -26,18 +27,14 @@
         <_ContentIncludedByDefault Remove="wwwroot\client\prerendered-routes.json" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="wwwroot\"/>
-    </ItemGroup>
-
     <PropertyGroup>
         <SpaRoot>..\Client\</SpaRoot>
         <SpaProxyServerUrl>http://localhost:4200</SpaProxyServerUrl>
     </PropertyGroup>
 
-    <!--    Post .Net build -->
-    <!-- Build Angular Application and populate wwwroot -->
-    <Target Name="PublishAngular" AfterTargets="Build">
+    <!--    Post build -->
+    <!-- ng build Angular Application and populate wwwroot -->
+    <Target Name="PublishAngular" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
         <!-- Clean wwwroot first -->
         <RemoveDir Directories="$(ProjectDir)wwwroot" />
         <MakeDir Directories="$(ProjectDir)wwwroot" />
