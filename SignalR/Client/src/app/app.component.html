@@ -1,6 +1,6 @@
 <div class="container">
 
-  @for(weather of weatherData; track weather) {
+  @for(weather of weatherData; track $index) {
     <app-weather-card [weather]="weather" />
   }
 </div>
