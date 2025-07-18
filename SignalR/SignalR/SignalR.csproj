@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <_ContentIncludedByDefault Remove="wwwroot\browser\favicon.ico"/>
+        <_ContentIncludedByDefault Remove="wwwroot\browser\index.html"/>
+        <_ContentIncludedByDefault Remove="wwwroot\browser\main-RVG4WXH6.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\browser\polyfills-B6TNHZQ6.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\browser\styles-5INURTSO.css"/>
+        <_ContentIncludedByDefault Remove="wwwroot\client\3rdpartylicenses.txt" />
+        <_ContentIncludedByDefault Remove="wwwroot\client\browser\favicon.ico" />
+        <_ContentIncludedByDefault Remove="wwwroot\client\browser\index.html" />
+        <_ContentIncludedByDefault Remove="wwwroot\client\browser\main-RVG4WXH6.js" />
+        <_ContentIncludedByDefault Remove="wwwroot\client\browser\polyfills-B6TNHZQ6.js" />
+        <_ContentIncludedByDefault Remove="wwwroot\client\browser\styles-5INURTSO.css" />
+        <_ContentIncludedByDefault Remove="wwwroot\client\prerendered-routes.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="wwwroot\"/>
+    </ItemGroup>
+
+    <PropertyGroup>
+        <SpaRoot>..\Client\</SpaRoot>
+        <SpaProxyServerUrl>http://localhost:4200</SpaProxyServerUrl>
+    </PropertyGroup>
+
+    <!--    Post .Net build -->
+    <!-- Build Angular Application and populate wwwroot -->
+    <Target Name="PublishAngular" AfterTargets="Build">
+        <!-- Clean wwwroot first -->
+        <RemoveDir Directories="$(ProjectDir)wwwroot" />
+        <MakeDir Directories="$(ProjectDir)wwwroot" />
+
+        <Exec WorkingDirectory="$(SpaRoot)" Command="npm install"/>
+        <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build"/>
+        <ItemGroup>
+            <DistFiles Include="$(SpaRoot)dist\client\browser\**\*.*"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(DistFiles)" DestinationFolder="$(ProjectDir)wwwroot\%(RecursiveDir)"/>
+    </Target>
+
+</Project>
+

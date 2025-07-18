@@ -1,0 +1,26 @@
+<div class="weather-card">
+  @if (weather()) {
+  <div class="weather-header">
+    <h2>{{ weather().city }}, {{ weather().state }}</h2>
+    <p>{{ weather().date | date: 'fullDate' }}</p>
+  </div>
+  <div class="weather-body">
+    <div class="weather-icon">
+      <span>{{ weather().icon }}</span>
+    </div>
+    <div class="weather-temp">
+      {{ weather().temperature }}°F
+    </div>
+  </div>
+  <div class="weather-footer">
+    <div class="detail">
+      <p>HUMIDITY</p>
+      <p>{{ weather().humidity }}%</p>
+    </div>
+    <div class="detail">
+      <p>WIND</p>
+      <p>{{ weather().windSpeed }} mph</p>
+    </div>
+  </div>
+  }
+</div>
