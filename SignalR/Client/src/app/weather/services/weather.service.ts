@@ -10,11 +10,11 @@ import { WeatherModelShared } from '../models/weather-model-shared';
 export class WeatherService {
   private http = inject(HttpClient);
   private apiUrl = 'https://localhost:7011/api/weatherforecast';
-
   getWeather(): Observable<WeatherModel[]> {
     return this.http
       .get<WeatherModelShared[]>(this.apiUrl)
-      .pipe(map(weather => weather.map(shared => this.mapToWeatherModel(shared))),
+      .pipe(
+        map(weatherArray => weatherArray.map(item => this.mapToWeatherModel(item))),
         catchError(error => {
           console.error('Error fetching weather data:', error);
           return of([]);
