@@ -5,3 +5,5 @@
 `docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama`
 
 `docker exec -it ollama ollama pull llama3`
+
+https://learn.microsoft.com/en-us/semantic-kernel/concepts/ai-services/chat-completion/?tabs=csharp-AzureOpenAI%2Cpython-AzureOpenAI%2Cjava-AzureOpenAI&pivots=programming-language-csharp

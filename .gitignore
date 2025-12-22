@@ -10,3 +10,4 @@ Migrations/
 AgentFrameworkQuickStart/AgentFrameworkQuickStart/appsettings.private.json
 
 HttpClient/HttpClient_Basic/appsettings.private.json
+**/*.private.json
