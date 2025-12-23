@@ -9,6 +9,11 @@ public class ArchivePlugin
     [Description("Saves data to a specified file in the history directory.")]
     public async Task WriteData(Kernel kernel, string fileName, string data)
     {
-        await File.WriteAllTextAsync($"./history/{fileName}", data);
+        var historyDirectory = "../../../Archive";
+        var filePath = Path.Combine(historyDirectory, fileName);
+    
+        // Ensure the directory exists
+        Directory.CreateDirectory(historyDirectory);
+        await File.WriteAllTextAsync(filePath, data);
     }
 }

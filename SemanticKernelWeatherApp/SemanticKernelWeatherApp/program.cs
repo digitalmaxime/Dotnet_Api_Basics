@@ -9,7 +9,6 @@ using SemanticKernelWeatherApp.ChatHistory;
 using SemanticKernelWeatherApp.Plugins;
 
 var builder = Kernel.CreateBuilder();
-
 IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.private.json").Build();
 
 // Get configuration values
@@ -28,7 +27,6 @@ builder.AddAzureOpenAIChatCompletion(
 builder.Services.AddHttpClient();
 
 // Plugins for function calls
-builder.Plugins.AddFromType<NewsFeedPlugin>();
 builder.Plugins.AddFromType<ArchivePlugin>();
 builder.Plugins.AddFromType<PizzaPlugin>();
 
@@ -44,9 +42,11 @@ Console.WriteLine(toto);
 
 while (true)
 {
-    Console.WriteLine("Ask >", ConsoleColor.Green);
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.Write("Ask > ");
+    Console.Out.Flush();
+    Console.ResetColor();
     var userInput = Console.ReadLine();
-
     if (string.IsNullOrWhiteSpace(userInput)) break;
 
     chatHistory.AddUserMessage(userInput);
