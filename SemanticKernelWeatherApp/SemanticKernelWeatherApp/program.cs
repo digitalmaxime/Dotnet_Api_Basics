@@ -23,11 +23,12 @@ builder.AddAzureOpenAIChatCompletion(
 
 builder.Services.AddHttpClient();
 
-// builder.AddOllamaChatCompletion(
-//     modelId: "llama3",
-//     baseUrl: new Uri("http://localhost:11434")
-// );
-
+/*
+builder.AddOllamaChatCompletion(
+    modelId: "llama3",
+    baseUrl: new Uri("http://localhost:11434")
+);
+*/
 
 // Plugins
 builder.Plugins.AddFromType<NewsFeedPlugin>();
@@ -39,47 +40,84 @@ var kernel = builder.Build();
 var chatService = kernel.GetRequiredService<IChatCompletionService>();
 
 // Persona
-ChatHistory chatHistory =
-    new ChatHistory(
-        "You are mario the plumber! If the user doesn't provider a news catagory, " +
-        "assume they want technology news and mention it to them. Keep your responses short and concise. " +
-        "Always greet the user with a friendly 'It's-a me, Mario!'");
+ChatHistory chatHistory = [];
+chatHistory.AddSystemMessage(
+    "You are mario the plumber! Assume the user is interested in ordering some pizza." +
+    "Keep your responses short and concise. Always greet the user with a friendly 'It's-a me, Mario!'"
+    );
 
+// Add a simulated function call from the assistant
+chatHistory.Add(
+    new()
+    {
+        Role = AuthorRole.Assistant,
+        Items = [
+            new FunctionCallContent(
+                functionName: "get_user_allergies",
+                pluginName: "User",
+                id: "0001",
+                arguments: new () { {"username", "laimonisdumins"} }
+            ),
+            new FunctionCallContent(
+                functionName: "get_user_allergies",
+                pluginName: "User",
+                id: "0002",
+                arguments: new () { {"username", "emavargova"} }
+            )
+        ]
+    }
+);
 
+// Add a simulated function results from the tool role
+chatHistory.Add(
+    new()
+    {
+        Role = AuthorRole.Tool,
+        Items = [
+            new FunctionResultContent(
+                functionName: "get_user_allergies",
+                pluginName: "User",
+                callId: "0001",
+                result: "{ \"allergies\": [\"peanuts\", \"gluten\"] }"
+            )
+        ]
+    }
+);
+chatHistory.Add(
+    new()
+    {
+        Role = AuthorRole.Tool,
+        Items = [
+            new FunctionResultContent(
+                functionName: "get_user_allergies",
+                pluginName: "User",
+                callId: "0002",
+                result: "{ \"allergies\": [\"dairy\", \"soy\"] }"
+            )
+        ]
+    }
+);
+
+PromptExecutionSettings settings = new() { FunctionChoiceBehavior = FunctionChoiceBehavior.None() };
+var toto = await kernel.InvokePromptAsync("Given the current time of day and weather, what is the likely color of the sky in Boston?", new (settings));
+System.Console.WriteLine(toto);
+// extra commit 1
+// extra commit 3
 while (true)
 {
-    Console.WriteLine("enter question>");
-    
+    Console.WriteLine("Ask >");
+
     var userInput = Console.ReadLine();
-    
+
     if (string.IsNullOrWhiteSpace(userInput)) break;
-    
+
     chatHistory.AddUserMessage(userInput);
-    
-    // var response0 = chatService.GetStreamingChatMessageContentsAsync(
-    //     chatHistory: chatHistory,
-    //     executionSettings: new OpenAIPromptExecutionSettings()
-    //     {
-    //         ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions
-    //     },
-    //     kernel: kernel
-    // );
-    //
-    // await foreach (var chunk in response0)
-    // {
-    //     Console.Write(chunk);
-    // }
-    //
-    
-    
-    
-    
-    
+
     var response = chatService.GetStreamingChatMessageContentsAsync(
         chatHistory,
         executionSettings: new OpenAIPromptExecutionSettings()
         {
-            ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions
+            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
         },
         kernel: kernel
     );
@@ -92,8 +130,31 @@ while (true)
             Console.Write(chunk);
         }
     }
-    
+
     Console.WriteLine(fullAnswer);
     chatHistory.AddAssistantMessage(fullAnswer);
     Console.WriteLine("\n\n");
 }
+
+Console.WriteLine("--------------------------");
+
+// Get the current length of the chat history object
+int currentChatHistoryLength = chatHistory.Count;
+
+// Get the chat message content
+ChatMessageContent results = await chatService.GetChatMessageContentAsync(
+    chatHistory,
+    kernel: kernel
+);
+
+// Get the new messages added to the chat history object
+for (int i = 0; i < chatHistory.Count; i++)
+{
+    Console.WriteLine(chatHistory[i]);
+}
+
+// Print the final message
+Console.WriteLine(results);
+
+// Add the final message to the chat history object
+chatHistory.Add(results);
