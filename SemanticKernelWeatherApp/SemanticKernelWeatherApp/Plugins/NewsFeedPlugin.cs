@@ -1,8 +1,8 @@
 using System.ComponentModel;
-using SimpleFeedReader;
 using Microsoft.SemanticKernel;
+using SimpleFeedReader;
 
-namespace SemanticKernelWeatherApp;
+namespace SemanticKernelWeatherApp.Plugins;
 
 public class NewsFeedPlugin 
 {

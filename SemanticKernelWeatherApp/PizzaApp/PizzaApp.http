@@ -1,0 +1,15 @@
+@PizzaApp_HostAddress = https://localhost:7233
+
+GET {{PizzaApp_HostAddress}}/api/pizza/get-pizzas
+Accept: application/json
+
+###
+
+POST {{PizzaApp_HostAddress}}/api/pizza/order-pizza/Hawaiian
+Accept: application/json
+
+###
+
+POST {{PizzaApp_HostAddress}}/api/pizza/add-pizza/Hawaiian/2
+Accept: application/json
+

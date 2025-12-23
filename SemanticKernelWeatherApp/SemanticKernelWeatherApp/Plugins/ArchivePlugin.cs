@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using Microsoft.SemanticKernel;
 
-namespace SemanticKernelWeatherApp;
+namespace SemanticKernelWeatherApp.Plugins;
 
 public class ArchivePlugin
 {
