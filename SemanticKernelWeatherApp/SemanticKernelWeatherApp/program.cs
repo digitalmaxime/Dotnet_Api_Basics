@@ -1,4 +1,3 @@
-using Codeblaze.SemanticKernel.Connectors.Ollama;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -15,6 +14,8 @@ IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettin
 var endpoint = new Uri(configuration["AzureOpenAI:Endpoint"]!);
 var deploymentName = configuration["AzureOpenAI:DeploymentName"]!;
 var apiKey = configuration["AzureOpenAI:ApiKey"]!;
+
+// 3. Configure the Kernel builder with Azure OpenAI
 builder.AddAzureOpenAIChatCompletion(
     deploymentName,
     endpoint.ToString(),
@@ -23,12 +24,6 @@ builder.AddAzureOpenAIChatCompletion(
 
 builder.Services.AddHttpClient();
 
-/*
-builder.AddOllamaChatCompletion(
-    modelId: "llama3",
-    baseUrl: new Uri("http://localhost:11434")
-);
-*/
 
 // Plugins
 builder.Plugins.AddFromType<NewsFeedPlugin>();
