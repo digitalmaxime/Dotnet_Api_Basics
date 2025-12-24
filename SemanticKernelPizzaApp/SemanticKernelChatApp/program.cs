@@ -36,7 +36,10 @@ var chatService = kernel.GetRequiredService<IChatCompletionService>();
 
 var chatHistory = ChatHistoryHelper.InitializeChatHistory().SimulateFunctionCalls();
 
-PromptExecutionSettings settings = new() { FunctionChoiceBehavior = FunctionChoiceBehavior.None() };
+PromptExecutionSettings settings = new()
+{
+    FunctionChoiceBehavior = FunctionChoiceBehavior.None(),
+};
 var toto = await kernel.InvokePromptAsync("Given the current time of day and weather, what is the likely color of the sky in Boston?", new (settings));
 Console.WriteLine(toto);
 

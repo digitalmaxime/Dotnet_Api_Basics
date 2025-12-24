@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticKernelWeatherApp", "SemanticKernelWeatherApp\SemanticKernelWeatherApp.csproj", "{255E1468-2B4F-436B-8E97-DF34D619C584}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticKernelChatApp", "SemanticKernelChatApp\SemanticKernelChatApp.csproj", "{255E1468-2B4F-436B-8E97-DF34D619C584}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaApp", "PizzaApp\PizzaApp.csproj", "{57FE84F3-CBF7-43D7-8F26-4F600DA29057}"
 EndProject

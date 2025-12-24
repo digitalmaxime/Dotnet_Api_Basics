@@ -1,40 +1,22 @@
 ﻿using System;
 using Azure;
 using Azure.AI.OpenAI;
-using OpenAI.Chat;
+using Microsoft.Agents.AI;
 using Microsoft.Extensions.Configuration;
+using OpenAI;
 
-// var agent = new AzureOpenAIClient(
-//     new Uri("https://<myresource>.openai.azure.com"),
-//     new AzureCliCredential())
-//         .GetChatClient(deployment)
-//         .CreateAIAgent(instructions: "You are good at telling jokes.", name: "Joker");
+
+// Get configuration values
 IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.private.json").Build();
-
-// 2. Get configuration values
-var endpoint = new Uri(configuration["AzureOpenAI:Endpoint"]!);
+var endpoint = configuration["AzureOpenAI:Endpoint"]!;
 var deploymentName = configuration["AzureOpenAI:DeploymentName"]!;
 var apiKey = configuration["AzureOpenAI:ApiKey"]!;
 
-
-AzureOpenAIClient azureClient = new(
-    endpoint,
-    new AzureKeyCredential(apiKey));
-OpenAI.Chat.ChatClient chatClient = azureClient.GetChatClient(deploymentName);
-
-
-List<ChatMessage> messages = new List<ChatMessage>()
-{
-    new SystemChatMessage("You are a helpful assistant."),
-    new UserChatMessage("I am going to Paris, what should I see?"),
-};
-
-var response = chatClient.CompleteChat(messages);
-Console.WriteLine(response.Value.Content[0].Text);
-// Append the model response to the chat history.
-messages.Add(new AssistantChatMessage(response.Value.Content[0].Text));
-// Append new user question.
-messages.Add(new UserChatMessage("What is so great about #1?"));
-
-response = chatClient.CompleteChat(messages);
-Console.WriteLine(response.Value.Content[0].Text);
+AIAgent agent = new AzureOpenAIClient(
+            new Uri(endpoint),
+            new AzureKeyCredential(apiKey))
+        .GetChatClient(deploymentName)
+        .CreateAIAgent()
+    // .CreateAIAgent(instructions: "You are good at telling jokes.");
+    ;
+Console.WriteLine(await agent.RunAsync("Tell me a joke about a pirate."));
