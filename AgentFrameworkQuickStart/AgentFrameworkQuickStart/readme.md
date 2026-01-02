@@ -78,8 +78,7 @@ dotnet add package OpenTelemetry.Exporter.OpenTelemetryProtocol
 Enable Agent Framework telemetry and create an OpenTelemetry TracerProvider that exports to the console.
 The TracerProvider must remain alive while you run the agent so traces are exported.
 
-using Jaeger Tracing though docker container
-
+In this demo, we are using *Jaeger* Tracing though docker container
 Use Jaeger either by spinning up the docker compose file below or by running it through [Testcontainers for .NET](https://dotnet.testcontainers.org/)
 ```yaml
 # docker-compose.yml
@@ -110,12 +109,110 @@ using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 
 // creates a new temporary test container scoped to the current test method
-    var jaeger = new ContainerBuilder("jaegertracing/all-in-one:latest")
-        .WithPortBinding(16686, 16686) // UI will be available on port 16686
-        .WithPortBinding(4317, 4317) // OTLP gRPC
-        .WithEnvironment("COLLECTOR_OTLP_ENABLED", "true")
-        .WithWaitStrategy(Wait.ForUnixContainer())
-        .Build();
+    await using var jaeger = new ContainerBuilder("jaegertracing/all-in-one:latest")
+    .WithPortBinding(16686, 16686)
+    .WithPortBinding(4317, 4317)
+    .WithEnvironment("COLLECTOR_OTLP_ENABLED", "true")
+    .WithWaitStrategy(Wait.ForUnixContainer())
+    .Build();
+
+    await jaeger.StartAsync();
 ```
 
 See [Microsoft's documentation on Observability for Agents](https://learn.microsoft.com/en-us/agent-framework/tutorials/agents/enable-observability?pivots=programming-language-csharp#enable-opentelemetry-in-your-app) and [Microsoft Reactor's youtube video](https://www.youtube.com/watch?v=TvgUim_3vrU&t=2596s)
+
+## Persisting and Resuming Agent Conversations
+
+Demo uses DotNet.Testcontainers to spin up a Postgres container. 
+
+The Postgres container is then used to store the serialized thread state.
+
+
+
+### Simple approach using thread state (in memory)
+
+Steps:
+- Create an agent and obtain a new thread that will hold the conversation state.
+  - `AIAgent agent = new AzureOpenAIClient(...);`
+  - `AIAgentThread thread = agent.GetNewThread();`
+- Run the agent, passing in the thread, so that the AgentThread includes this exchange.
+  - `await agent.RunAsync("Tell me a joke.", thread)`
+- Save the serialized thread state to a database or file.
+  - `string serializedJson = thread.Serialize(JsonSerializerOptions.Web).GetRawText();`
+  - `await _storage.SaveAsync(serializedJson);`
+- When the agent is invoked again, pass the thread to the agent.
+  - Load the persisted JSON from storage 
+    - `string loadedJson = await _storage.LoadAsync();` 
+    - `JsonElement reloaded = JsonSerializer.Deserialize<JsonElement>(loadedJson, JsonSerializerOptions.Web);`
+  - Recreate the AgentThread instance from it. The thread must be deserialized using an agent instance (of the same type e.g. AzureOpenAIClient).
+    - `AgentThread resumedThread = agent.DeserializeThread(reloaded, JsonSerializerOptions.Web);`
+- Resume the conversation by passing the thread to the agent.
+  - `await agent.RunAsync("now tell that same joke but in french", resumedThread);`
+  
+See [Microsoft's documentation on Persisting and Resuming Agent Conversations](https://learn.microsoft.com/en-us/agent-framework/tutorials/agents/persisted-conversation?pivots=programming-language-csharp#persisting-and-resuming-the-conversation)
+
+### Using a Message Store
+
+package for using *ChatMessage Store* : 
+`dotnet add package Microsoft.SemanticKernel.Connectors.InMemory --prerelease`
+
+package for using Postgres vector store : `dotnet add package Microsoft.SemanticKernel.Connectors.PgVector --prerelease`
+
+#### Message storage and retrieval methods
+The most important methods to implement are:
+
+`AddMessagesAsync` - called to add new messages to the store.
+
+`GetMessagesAsync` - called to retrieve the messages from the store.
+- Any chat history reduction logic, such as summarization or trimming, should be done before returning messages from GetMessagesAsync.
+
+#### Chat History Reduction
+
+Strategies
+- Truncation
+- Summarization
+- Token-Based
+
+#### Best Practice Recommendation
+Use a combination approach:
+- Always save full history to the database (for audit/legal)
+- Generate summaries for conversations longer than 20 messages
+- Create embeddings of summaries for semantic search
+- Load optimized context when resuming (summary + recent messages)
+- Implement retention policies (archive old conversations)
+- Tiered Storage
+  - Hot storage: Recent full conversations (last 24 hours)
+  - Warm storage: Summaries (last 30 days)
+  - Cold storage: Archives (older than 30 days)
+- Context Window Management
+
+#### Recommended Database Schema
+```sql
+-- Full conversation history
+CREATE TABLE conversation_history (
+    id UUID PRIMARY KEY,
+    conversation_id VARCHAR(255),
+    created_at TIMESTAMP,
+    full_json JSONB,
+    message_count INT
+);
+
+-- Summaries for efficient retrieval
+CREATE TABLE conversation_summaries (
+    id UUID PRIMARY KEY,
+    conversation_id VARCHAR(255),
+    summary TEXT,
+    created_at TIMESTAMP,
+    summary_embedding VECTOR(1536) -- For pgvector
+);
+
+-- Individual messages (for granular search)
+CREATE TABLE messages (
+    id UUID PRIMARY KEY,
+    conversation_id VARCHAR(255),
+    role VARCHAR(50),
+    content TEXT,
+    timestamp TIMESTAMP,
+    embedding VECTOR(1536)
+);
+```
