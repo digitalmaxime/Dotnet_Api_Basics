@@ -216,3 +216,20 @@ CREATE TABLE messages (
     embedding VECTOR(1536)
 );
 ```
+
+## Create a Simple Sequential Workflow
+
+Sequential workflows are the foundation of building complex AI agent systems.
+
+packages `dotnet add package Microsoft.Agents.AI.Workflows --prerelease`
+
+
+
+- Creating a custom executor with one handler
+- Creating a custom executor from a function
+- Using WorkflowBuilder to connect executors with edges
+- Processing data through sequential steps
+- Observing workflow execution through events
+
+
+See [Create a Simple Sequential Workflow](https://learn.microsoft.com/en-us/agent-framework/tutorials/workflows/simple-sequential-workflow?pivots=programming-language-csharp#overview)

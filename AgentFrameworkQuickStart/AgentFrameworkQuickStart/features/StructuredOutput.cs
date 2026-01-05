@@ -22,6 +22,7 @@ public static class StructuredOutput
                 schemaName: nameof(PersonInfo),
                 schemaDescription: "Information about a person including their name, age, and occupation")
         };
+        
         AIAgent structuredOutputAgent = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey))
             .GetChatClient(deploymentName)
             .CreateAIAgent(new ChatClientAgentOptions()
@@ -29,7 +30,7 @@ public static class StructuredOutput
                 Name = "HelpfulAssistant",
                 ChatOptions = chatOptions
             });
-        var response =
+        var response = 
             await structuredOutputAgent.RunAsync(
                 "Please provide information about John Smith, who is a 35-year-old software engineer.");
         var personInfo = response.Deserialize<PersonInfo>(JsonSerializerOptions.Web);

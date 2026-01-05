@@ -13,18 +13,20 @@ var endpoint = configuration["AzureOpenAI:Endpoint"]!;
 var deploymentName = configuration["AzureOpenAI:DeploymentName"]!;
 var apiKey = configuration["AzureOpenAI:ApiKey"]!;
 
-var agent = await BasicAgent(endpoint, deploymentName, apiKey);
+// var agent = await BasicAgent(endpoint, deploymentName, apiKey);
+//
+// await HumanInTheLoop.Call(endpoint, deploymentName, apiKey);
+//
+// await StructuredOutput.Call(endpoint, deploymentName, apiKey);
+//
+// await AgentAsFunctionTool.Call(endpoint, deploymentName, apiKey, agent);
+//
+// await Telemetry.Call(endpoint, deploymentName, apiKey);
+//
+// await PersistingChatHistory.Call(endpoint, deploymentName, apiKey, configuration);
 
-await HumanInTheLoop.Call(endpoint, deploymentName, apiKey);
-
-await StructuredOutput.Call(endpoint, deploymentName, apiKey);
-
-await AgentAsFunctionTool.Call(endpoint, deploymentName, apiKey, agent);
-
-await Telemetry.Call(endpoint, deploymentName, apiKey);
-
-await PersistingChatHistory.Call(endpoint, deploymentName, apiKey, configuration);
-
+await SimpleSequentialWorkflow.Call();
+ 
 return;
 
 #region Basic Agent
