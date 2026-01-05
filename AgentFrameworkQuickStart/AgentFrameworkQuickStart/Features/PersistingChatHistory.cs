@@ -8,7 +8,7 @@ using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel.Connectors.PgVector;
 using OpenAI;
 
-namespace AgentFrameworkQuickStart.features;
+namespace AgentFrameworkQuickStart.Features;
 
 public static class PersistingChatHistory
 {

@@ -3,7 +3,7 @@ using Azure.AI.OpenAI;
 using Microsoft.Agents.AI;
 using OpenAI;
 
-namespace AgentFrameworkQuickStart.features;
+namespace AgentFrameworkQuickStart.Features;
 
 public static class AgentAsFunctionTool
 {

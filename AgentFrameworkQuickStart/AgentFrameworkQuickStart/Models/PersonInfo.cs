@@ -1,4 +1,4 @@
-﻿namespace AgentFrameworkQuickStart.models;
+﻿namespace AgentFrameworkQuickStart.Models;
 public class PersonInfo
 {
     public string? Name { get; set; }

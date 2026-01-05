@@ -1,12 +1,12 @@
 ﻿using System.Text.Json;
-using AgentFrameworkQuickStart.models;
+using AgentFrameworkQuickStart.Models;
 using Azure;
 using Azure.AI.OpenAI;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using OpenAI;
 
-namespace AgentFrameworkQuickStart.features;
+namespace AgentFrameworkQuickStart.Features;
 
 public static class StructuredOutput
 {

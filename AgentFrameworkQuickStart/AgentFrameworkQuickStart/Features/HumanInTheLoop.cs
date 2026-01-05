@@ -1,13 +1,12 @@
 ﻿#pragma warning disable MEAI001
 
-using AgentFrameworkQuickStart.tools;
 using Azure;
 using Azure.AI.OpenAI;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using OpenAI;
 
-namespace AgentFrameworkQuickStart.features;
+namespace AgentFrameworkQuickStart.Features;
 
 public static class HumanInTheLoop
 {
@@ -15,7 +14,7 @@ public static class HumanInTheLoop
     {
         Console.WriteLine("--- Human In The Loop Function Call ---");
     
-        var weatherFunction = AIFunctionFactory.Create(Tools.GetWeather);
+        var weatherFunction = AIFunctionFactory.Create(Tools.Tools.GetWeather);
         var approvalRequiredWeatherFunction = new ApprovalRequiredAIFunction(weatherFunction);
 
         AIAgent agent = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey))
@@ -25,7 +24,7 @@ public static class HumanInTheLoop
                 instructions:
                 "You are a utility assistant that can get the current date/time. When asked for this information, use your available tools.",
                 description: "An agent that can get the current date/time.",
-                tools: [approvalRequiredWeatherFunction, AIFunctionFactory.Create(Tools.GetDateTime)]
+                tools: [approvalRequiredWeatherFunction, AIFunctionFactory.Create(Tools.Tools.GetDateTime)]
             );
         AgentThread thread = agent.GetNewThread();
         AgentRunResponse response = await agent.RunAsync("What is the weather like in Amsterdam?", thread);

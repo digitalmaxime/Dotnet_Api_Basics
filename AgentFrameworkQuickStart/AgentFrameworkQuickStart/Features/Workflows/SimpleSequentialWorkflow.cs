@@ -1,11 +1,13 @@
 ﻿using Microsoft.Agents.AI.Workflows;
 
-namespace AgentFrameworkQuickStart.features;
+namespace AgentFrameworkQuickStart.Features.Workflows;
 
 public static class SimpleSequentialWorkflow
 {
     public async static Task Call()
     {
+        Console.WriteLine("--- Sequential Workflow ---");
+
         var uppercase = new UppercaseExecutor();
         var reverse = new ReverseTextExecutor();
         // Build the workflow by connecting executors sequentially

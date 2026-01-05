@@ -1,5 +1,6 @@
-﻿using AgentFrameworkQuickStart.features;
-using AgentFrameworkQuickStart.tools;
+﻿using AgentFrameworkQuickStart.Features;
+using AgentFrameworkQuickStart.Features.Workflows;
+using AgentFrameworkQuickStart.Tools;
 using Azure;
 using Azure.AI.OpenAI;
 using Microsoft.Agents.AI;
@@ -13,19 +14,21 @@ var endpoint = configuration["AzureOpenAI:Endpoint"]!;
 var deploymentName = configuration["AzureOpenAI:DeploymentName"]!;
 var apiKey = configuration["AzureOpenAI:ApiKey"]!;
 
-// var agent = await BasicAgent(endpoint, deploymentName, apiKey);
-//
-// await HumanInTheLoop.Call(endpoint, deploymentName, apiKey);
-//
-// await StructuredOutput.Call(endpoint, deploymentName, apiKey);
-//
-// await AgentAsFunctionTool.Call(endpoint, deploymentName, apiKey, agent);
-//
-// await Telemetry.Call(endpoint, deploymentName, apiKey);
-//
-// await PersistingChatHistory.Call(endpoint, deploymentName, apiKey, configuration);
+var agent = await BasicAgent(endpoint, deploymentName, apiKey);
+
+await HumanInTheLoop.Call(endpoint, deploymentName, apiKey);
+
+await StructuredOutput.Call(endpoint, deploymentName, apiKey);
+
+await AgentAsFunctionTool.Call(endpoint, deploymentName, apiKey, agent);
+
+await Telemetry.Call(endpoint, deploymentName, apiKey);
+
+await PersistingChatHistory.Call(endpoint, deploymentName, apiKey, configuration);
 
 await SimpleSequentialWorkflow.Call();
+
+await ConcurrentWorkflow.Call(endpoint, deploymentName, apiKey);
  
 return;
 

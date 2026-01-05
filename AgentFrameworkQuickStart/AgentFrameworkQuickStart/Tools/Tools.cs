@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace AgentFrameworkQuickStart.tools;
+namespace AgentFrameworkQuickStart.Tools;
 
 public class Tools
 {
