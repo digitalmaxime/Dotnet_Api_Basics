@@ -1,0 +1,20 @@
+﻿### GET request to example server
+GET http://localhost:5187/basic
+
+###
+GET http://localhost:5187/named
+
+###
+GET http://localhost:5187/typed
+
+###
+GET http://localhost:5187/generated
+
+### 
+POST http://localhost:5187/post
+Content-Type: application/json
+
+{
+  "Title": "my title",
+  "Content": "my blog post content"
+}

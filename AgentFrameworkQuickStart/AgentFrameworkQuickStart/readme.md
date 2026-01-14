@@ -173,7 +173,7 @@ Strategies
 - Summarization
 - Token-Based
 
-#### Best Practice Recommendation
+#### Storage Best Practice
 Use a combination approach:
 - Always save full history to the database (for audit/legal)
 - Generate summaries for conversations longer than 20 messages
@@ -233,3 +233,8 @@ packages `dotnet add package Microsoft.Agents.AI.Workflows --prerelease`
 
 
 See [Create a Simple Sequential Workflow](https://learn.microsoft.com/en-us/agent-framework/tutorials/workflows/simple-sequential-workflow?pivots=programming-language-csharp#overview)
+
+## Best Practices
+
+- Rate limiting
+- Guard Rails
