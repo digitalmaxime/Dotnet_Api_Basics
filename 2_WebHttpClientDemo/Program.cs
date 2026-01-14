@@ -6,13 +6,17 @@ using Refit;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient(); // Used by BasicHttpService
+
 builder.Services.AddHttpClient( // Used by NamedClientService
-    NamedHttpClientService.Name,
+    "NamedClient",
     client => { client.BaseAddress = new Uri("https://localhost:8080/"); });
-builder.Services.AddHttpClient<TypedHttpClientService>(client => // Automatically registers TypedHttpClientService
-{
-    client.BaseAddress = new Uri("https://localhost:8080/");
-});
+
+builder.Services.AddHttpClient<TypedHttpClient>(client => // Automatically registers TypedHttpClientService
+    {
+        client.BaseAddress = new Uri("https://localhost:8080/");
+    })
+    .AddStandardResilienceHandler(); // Adds retry policy
+
 builder.Services.AddRefitClient<IGeneratedHttpClientService>() // Refit client
     .ConfigureHttpClient(client => { client.BaseAddress = new Uri("https://localhost:8080/"); });
 
@@ -22,14 +26,14 @@ builder.Services.AddScoped<NamedHttpClientService>();
 var app = builder.Build();
 
 app.MapGet("/basic",
-    async ([FromServices] BasicHttpService client) => await client.GetBlogsAsync());
+    async ([FromServices] BasicHttpService service) => await service.GetBlogsAsync());
 app.MapGet("/named",
-    async ([FromServices] NamedHttpClientService client) => await client.GetBlogsAsync());
+    async ([FromServices] NamedHttpClientService service) => await service.GetBlogsAsync());
 app.MapGet("/typed",
-    async ([FromServices] TypedHttpClientService client) => await client.GetBlogsAsync());
+    async ([FromServices] TypedHttpClient client) => await client.GetBlogsAsync());
 app.MapGet("/generated",
     async ([FromServices] IGeneratedHttpClientService client) => await client.GetBlogsAsync());
-app.MapPost("/post", async ([FromBody] BlogPost blogPost, [FromServices] BasicHttpService client) =>
+app.MapPost("/post", async ([FromBody] BlogPost blogPost, [FromServices] TypedHttpClient client) =>
 {
     var response = await client.CreatePostAsyn(blogPost.Title, blogPost.Content);
     return Results.Ok(response);

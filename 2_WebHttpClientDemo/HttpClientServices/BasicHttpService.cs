@@ -24,25 +24,4 @@ public class BasicHttpService(IHttpClientFactory httpClientFactory)
             return [];
         }
     }
-    
-    public async Task<string> CreatePostAsyn(string title, string content)
-    {
-        var client = httpClientFactory.CreateClient();
-
-        try
-        {
-            var response = await client.PostAsJsonAsync<BlogPost>(
-                $"https://localhost:8080/blogposts",
-                new BlogPost { Title = title, Content = content },
-                new JsonSerializerOptions(JsonSerializerDefaults.Web));
-
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-            return "error";
-        }
-    }
 }
