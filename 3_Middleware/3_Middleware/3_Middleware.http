@@ -1,0 +1,21 @@
+@_3_Middleware_HostAddress = https://localhost:7241
+
+GET {{_3_Middleware_HostAddress}}/blog/
+Accept: application/json
+
+###
+
+GET {{_3_Middleware_HostAddress}}/blog/exampleblog
+Accept: application/json
+
+###
+
+GET {{_3_Middleware_HostAddress}}/blog/classifiedblog
+Accept: application/json
+
+###
+
+GET {{_3_Middleware_HostAddress}}/blog/exception
+Accept: application/json
+
+###
