@@ -8,25 +8,18 @@ It features: Response caching, Logging, Error handling
 
 Three main methods to configure the application's request processing pipeline
 
-- `app.Use`
-- `app.Run`
-- `app.Map`
-  
-`app.Use()` adds a middleware delegate to the pipeline that can perform processing both before and after the subsequent middleware in the chain. 
+### `app.Use()`
+adds a middleware delegate to the pipeline that can perform processing both before and after the subsequent middleware in the chain. 
 It explicitly receives a next delegate, which it must call (e.g., `await next()`) to pass the request to the next component in the pipeline. 
 This makes it suitable for "wrapping" logic like logging, authentication, or error handling that needs to interact with the entire request lifecycle.
 
-You can declare classes which implement IMiddelware to be used as middleware.
-e.g. `public class LoggingMiddleware : IMiddleware`
-Those classes can be used in the API pipeline through: `app.UseMiddleware<LoggingMiddleware>();`
-
-
-
-`app.Run()` adds a terminal middleware delegate that always short-circuits the pipeline. 
+### `app.Run()`
+adds a terminal middleware delegate that always short-circuits the pipeline. 
 It does not have a next delegate parameter and, once executed, 
 it writes directly to the response and prevents any later middleware components
 
-`app.Map()` is used to branch the middleware pipeline based on a matching request path. 
+### `app.Map()`
+is used to branch the middleware pipeline based on a matching request path. 
 If an incoming request's URL path starts with the specified pattern (e.g., /api), the request is routed into a separate, modular pipeline defined within the Map delegate
 
 ### Middelwares
@@ -39,8 +32,6 @@ Commonly used predefined middleware components include:
 - Rate limiting
 - Response caching 
   - ** UseCors must be called before UseResponseCaching when using CORS middleware.
-
-
 
 ### Filters
 
