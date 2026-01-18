@@ -1,0 +1,22 @@
+@_4_SqliteDatabase_HostAddress = https://localhost:7297
+
+GET {{_4_SqliteDatabase_HostAddress}}/blogs/
+Accept: application/json
+
+###
+GET {{_4_SqliteDatabase_HostAddress}}/blogs/3
+Accept: application/json
+
+###
+POST {{_4_SqliteDatabase_HostAddress}}/blogs
+Content-Type: application/json
+
+{
+    "Title": "my cool blog2"
+}
+
+###
+DELETE {{_4_SqliteDatabase_HostAddress}}/blogs/3
+Accept: application/json
+
+###

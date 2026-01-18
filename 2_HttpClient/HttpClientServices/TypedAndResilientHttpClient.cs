@@ -8,7 +8,7 @@ namespace _2_WebHttpClientDemo.HttpClientServices;
 *    [FromServices] TypedHttpClient client
 * class 'TypedHttpClient' must have a constructor with parameter HttpClient
 */
-public class TypedHttpClient(HttpClient httpClient) 
+public class TypedAndResilientHttpClient(HttpClient httpClient) 
 {
     public const string Name = "NamedClientService";
     public async Task<BlogPost[]> GetBlogsAsync()

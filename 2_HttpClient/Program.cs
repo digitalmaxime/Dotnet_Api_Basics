@@ -11,7 +11,7 @@ builder.Services.AddHttpClient( // Used by NamedClientService
     "NamedClient",
     client => { client.BaseAddress = new Uri("https://localhost:8080/"); });
 
-builder.Services.AddHttpClient<TypedHttpClient>(client => // Automatically registers TypedHttpClientService
+builder.Services.AddHttpClient<TypedAndResilientHttpClient>(client => // Automatically registers TypedHttpClientService
     {
         client.BaseAddress = new Uri("https://localhost:8080/");
     })
@@ -30,10 +30,10 @@ app.MapGet("/basic",
 app.MapGet("/named",
     async ([FromServices] NamedHttpClientService service) => await service.GetBlogsAsync());
 app.MapGet("/typed",
-    async ([FromServices] TypedHttpClient client) => await client.GetBlogsAsync());
+    async ([FromServices] TypedAndResilientHttpClient client) => await client.GetBlogsAsync());
 app.MapGet("/generated",
     async ([FromServices] IGeneratedHttpClientService client) => await client.GetBlogsAsync());
-app.MapPost("/post", async ([FromBody] BlogPost blogPost, [FromServices] TypedHttpClient client) =>
+app.MapPost("/post", async ([FromBody] BlogPost blogPost, [FromServices] TypedAndResilientHttpClient client) =>
 {
     var response = await client.CreatePostAsyn(blogPost.Title, blogPost.Content);
     return Results.Ok(response);
