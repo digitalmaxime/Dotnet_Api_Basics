@@ -2,7 +2,7 @@
 
 namespace AgentFrameworkQuickStart.Tools;
 
-public class Tools
+public class GeneralTools
 {
     private const string UtcDateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 

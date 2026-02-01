@@ -223,8 +223,6 @@ Sequential workflows are the foundation of building complex AI agent systems.
 
 packages `dotnet add package Microsoft.Agents.AI.Workflows --prerelease`
 
-
-
 - Creating a custom executor with one handler
 - Creating a custom executor from a function
 - Using WorkflowBuilder to connect executors with edges
@@ -233,6 +231,172 @@ packages `dotnet add package Microsoft.Agents.AI.Workflows --prerelease`
 
 
 See [Create a Simple Sequential Workflow](https://learn.microsoft.com/en-us/agent-framework/tutorials/workflows/simple-sequential-workflow?pivots=programming-language-csharp#overview)
+
+## Create RAG tooled agent
+
+Retrieval Augmented Generation, RAG for short, can be achieved in MS Agent Framework using
+vector embedding. 
+
+packages `Microsoft.SemanticKernel.Connectors.PgVector` or `Microsoft.SemanticKernel.Connectors.InMemory`
+
+
+## Agent as Function Tool
+
+Conceptually flattening an agent into a tool/function. 
+
+The tool agent acts more like a stateless capability, like a Function, Plugin or Helper module.
+
+Key characteristics : 
+- Invoked like a function call
+- Synchronous eexecution
+- Stateless (typically)
+- Executed on the same process / thread
+- Used for deterministic tasks with narrow expertise
+
+`tools: [toolAgent.AsAIFunction()]`
+
+## Agent to Agent
+
+Unlike _Agent as Function Tool_, A2A exposes autonomous agent over the Agent-to-Agent protocol. 
+
+A2A is a standardized protocol that supports:
+
+- Agent discovery through agent cards
+- Message-based communication between agents
+- Long-running agentic processes via tasks
+- Cross-platform interoperability between different agent frameworks
+
+Key characteristics:
+- The agent is network addressable
+- It has its own lifecycle
+- It can reason, plan 
+- It can be stateful
+- Talked over by A2A messages, not function calls
+
+packages 
+- `Microsoft.Agents.AI.Hosting.A2A.AspNetCore` for the 'host' side (the one being called)
+- `Microsoft.Agents.AI.Hosting.A2A` for the client side (the one making the external call)
+
+To communicate with agent over http, the POST body needs to comply with the A2A specification.
+- `messageId`
+  - A unique identifier for this specific message. You can create your own ID (e.g., a GUID) 
+  - or set it to null to let the agent generate one automatically.
+- `contextId`
+  - The conversation identifier. Provide your own ID to start a new conversation or continue an existing one by reusing a previous contextId. 
+  - The agent will maintain conversation history for the same contextId. Agent will generate one for you as well, if none is provided.
+
+The response includes the contextId (conversation identifier), messageId (message identifier), and the actual content from the  agent.
+  
+see example in `a2aclient.http` file
+
+see [A2A documentation](https://learn.microsoft.com/en-us/agent-framework/user-guide/agents/agent-types/a2a-agent?pivots=programming-language-csharp#getting-started)
+
+#### A2A Protocol "Message"
+
+In my code example, `/a2a/pizza/v1/message:send` and `/a2a/pizza/v1/message:stream`
+
+**What A2A actually defines**
+
+- `message`
+- `parts`
+- `roles`
+- `contextId`
+- streaming
+- tool calls
+- metadata
+
+That’s it.
+
+So this:
+```json
+{
+  "message": {
+    "kind": "message",
+    "role": "user",
+    "parts": [
+      {
+        "kind": "text",
+        "text": "Order me a pizza"
+      }
+    ]
+  }
+}
+```
+
+
+✅ Is the protocol
+
+There is nothing lower-level than this.
+
+#### A2A Protocol "Task"
+
+In A2A, a task is a convention. A message is the protocol.
+“A message (or small set of messages) that represents a single unit of delegated work.”
+
+Semantically: “Do this. Return a result. Stop.”
+
+Protocol-wise: “Here is a message.”
+
+#### AgentCard Configuration
+
+The AgentCard provides metadata about your agent for discovery and integration:
+
+```csharp
+app.MapA2A(agent, "/a2a/pizza", agentCard: new()
+{
+    Name = "My Pizza Agent",
+    Description = "A helpful agent that assists with tasks.",
+    Version = "1.0",
+});
+```
+You can access the agent card by sending this request:
+```http request
+  # Send A2A request to the pirate agent
+  GET {{baseAddress}}/a2a/pizza/v1/card
+```
+AgentCard Properties
+
+- Name: Display name of the agent
+- Description: Brief description of the agent
+- Version: Version string for the agent
+- Url: Endpoint URL (automatically assigned if not specified)
+- Capabilities: Optional metadata about streaming, push notifications, and other features
+
+#### Exposing Multiple Agents
+
+You can expose multiple agents in a single application, as long as their endpoints don't collide. 
+
+```csharp
+var mathAgent = builder.AddAIAgent("math", instructions: "You are a math expert.");
+var scienceAgent = builder.AddAIAgent("science", instructions: "You are a science expert.");
+
+app.MapA2A(mathAgent, "/a2a/math");
+app.MapA2A(scienceAgent, "/a2a/science");
+```
+
+see [Microsoft's A2A documentation](https://learn.microsoft.com/en-us/agent-framework/user-guide/hosting/agent-to-agent-integration?tabs=dotnet-cli%2Cuser-secrets#what-is-a2a)
+
+## A2A vs Agent as Tool
+
+A2A for:
+- Planner / Manager agents
+- External collaborators
+
+Tools for:
+- Specialists
+- Validators
+- IO-bound operations
+
+
+| Question                                         | A2A | Tool |
+| ------------------------------------------------ | --- | ---- |
+| Can it refuse or negotiate?                      | ✅   | ❌    |
+| Can it decide *how* to solve the task?           | ✅   | ❌    |
+| Can it be replaced by another system?            | ✅   | ❌    |
+| Can it run independently?                        | ✅   | ❌    |
+| Is it part of the main agent’s chain-of-thought? | ❌   | ✅    |
+
+
 
 ## Best Practices
 

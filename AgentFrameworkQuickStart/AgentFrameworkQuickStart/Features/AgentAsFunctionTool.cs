@@ -2,6 +2,7 @@
 using Azure.AI.OpenAI;
 using Microsoft.Agents.AI;
 using OpenAI;
+using OpenAI.Chat;
 
 namespace AgentFrameworkQuickStart.Features;
 
