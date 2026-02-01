@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.AI.OpenAI;
 using Microsoft.Agents.AI;
+using Microsoft.Extensions.AI;
 using OpenAI;
 using OpenTelemetry;
 using OpenTelemetry.Resources;
@@ -30,15 +31,21 @@ public static class Telemetry
             .Build();
 
         var azureClient = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey));
-        var chatClient = azureClient
+        var client = azureClient
             .GetChatClient(deploymentName)
-            .CreateAIAgent(instructions: "You are good at telling jokes. about telemetry", name: "Joker")
+            .AsIChatClient();
+
+        var agent = new ChatClientAgent(
+                chatClient: client,
+                name: "Joker",
+                instructions: "You are good at telling jokes. about telemetry",
+                loggerFactory: null,
+                services: null)
             .AsBuilder()
             .UseOpenTelemetry(sourceName: agentTelemetrySource, configure: c => c.EnableSensitiveData = true)
             .Build();
 
-        Console.WriteLine(await chatClient.RunAsync("Tell me a space exploration joke."));
+        Console.WriteLine(await agent.RunAsync("Tell me a space exploration joke."));
         Console.WriteLine();
     }
-
 }

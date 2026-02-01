@@ -8,12 +8,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 
-IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.private.json").Build();
-var endpoint = configuration["AzureOpenAI:Endpoint"]!;
-var deploymentName = configuration["AzureOpenAI:DeploymentName"]!;
-var apiKey = configuration["AzureOpenAI:ApiKey"]!;
 
 var builder = WebApplication.CreateBuilder();
+
+builder.Configuration.AddUserSecrets<Program>(optional: true);
+
+var endpoint = builder.Configuration["AzureOpenAI:Endpoint"]!;
+var deploymentName = builder.Configuration["AzureOpenAI:DeploymentName"]!;
+var apiKey = builder.Configuration["AzureOpenAI:ApiKey"]!;
 
 Console.WriteLine("--- A2A External Agent (Pizza) Starting on port 5001 ---");
 
@@ -44,6 +46,8 @@ var agentCard = new AgentCard()
 };
 
 // Expose the agent via A2A protocol.
-app.MapA2A(pizzaAgent, path: "/a2a/pizza", agentCard, taskManager => app.MapWellKnownAgentCard(taskManager, "/"));
+app.MapA2A(pizzaAgent, path: "/a2a/pizza", agentCard
+    , taskManager => app.MapWellKnownAgentCard(taskManager, "/")
+    );
 
 await app.RunAsync();

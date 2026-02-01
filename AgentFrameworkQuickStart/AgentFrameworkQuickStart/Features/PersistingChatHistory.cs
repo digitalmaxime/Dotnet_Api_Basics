@@ -1,12 +1,12 @@
 ﻿using System.Text.Json;
 using Azure;
+using Azure.AI.Agents.Persistent;
 using Azure.AI.OpenAI;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel.Connectors.PgVector;
-using OpenAI;
 
 namespace AgentFrameworkQuickStart.Features;
 
@@ -20,36 +20,41 @@ public static class PersistingChatHistory
         IConfiguration configuration)
     {
         Console.WriteLine("--- Persisting Chat History ---");
-        
+
         var connectionString = configuration.GetRequiredSection("ConnectionStrings:DefaultConnection").Get<string>();
         var vectorStore = new PostgresVectorStore(connectionString!);
 
-        AIAgent agent = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey))
+        var client = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey))
             .GetChatClient(deploymentName)
-            .CreateAIAgent(new ChatClientAgentOptions
+            .AsIChatClient();
+
+        var chatClientAgentOptions = new ChatClientAgentOptions
+        {
+            Name = "MyChatHistoryAgent",
+            Description = "Agent for persisting chat history in a vector store.",
+            ChatOptions = new ChatOptions()
             {
-                Name = "MyOptions",
-                Description = "Options for persisting chat history in a vector store.",
-                ChatOptions = new ChatOptions()
-                {
-                    Instructions = "Respond with Mark Normand joke.",
-                },
-                // 💡 Create a new chat message store for this agent that stores the messages in a vector store.
-                ChatMessageStoreFactory = ctx => new MyChatMessageStore(
-                    vectorStore,
-                    ctx.SerializedState,
-                    ctx.JsonSerializerOptions)
-            });
+                Instructions = "Respond with Mark Normand joke.",
+                Tools = [],
+            },
+            ChatHistoryProviderFactory = (ctx, ct) => new ValueTask<ChatHistoryProvider>(
+                new MyChatMessageStore(vectorStore, ctx.SerializedState, ctx.JsonSerializerOptions)),
+        };
+        
+        var agent = new ChatClientAgent(
+            chatClient: client,
+            options: chatClientAgentOptions,
+            loggerFactory: null,
+            services: null);
 
-        AgentThread thread = agent.GetNewThread();
-        Console.WriteLine(await agent.RunAsync("Tell me a joke.", thread));
-        Console.WriteLine(await agent.RunAsync("Tell me that same joke but in french.", thread));
+        AgentSession session = await agent.GetNewSessionAsync();
+        Console.WriteLine(await agent.RunAsync("Tell me a joke.", session ));
+        Console.WriteLine(await agent.RunAsync("Tell me that same joke but in french.", session));
         Console.WriteLine();
-
     }
 }
 
-internal class MyChatMessageStore : ChatMessageStore
+internal class MyChatMessageStore : ChatHistoryProvider
 {
     private readonly VectorStore _vectorStore;
     private string? ThreadDbKey { get; set; }
@@ -65,7 +70,8 @@ internal class MyChatMessageStore : ChatMessageStore
         }
     }
 
-    public override async Task<IEnumerable<ChatMessage>> GetMessagesAsync(CancellationToken cancellationToken = default)
+    public override async ValueTask<IEnumerable<ChatMessage>> InvokingAsync(InvokingContext context,
+        CancellationToken cancellationToken = new CancellationToken())
     {
         var collection = _vectorStore.GetCollection<string, ChatHistoryItem>("ChatHistory");
         await collection.EnsureCollectionExistsAsync(cancellationToken);
@@ -86,14 +92,15 @@ internal class MyChatMessageStore : ChatMessageStore
         return messages;
     }
 
-    public override async Task AddMessagesAsync(IEnumerable<ChatMessage> messages,
-        CancellationToken cancellationToken = default)
+    public override async ValueTask InvokedAsync(InvokedContext context,
+        CancellationToken cancellationToken = new CancellationToken())
     {
-        // TODO: summarize messages 
+// TODO: summarize messages 
+
         ThreadDbKey ??= Guid.NewGuid().ToString("N");
         var collection = _vectorStore.GetCollection<string, ChatHistoryItem>("ChatHistory");
         await collection.EnsureCollectionExistsAsync(cancellationToken);
-        await collection.UpsertAsync(messages.Select(x => new ChatHistoryItem
+        await collection.UpsertAsync(context.RequestMessages.Select(x => new ChatHistoryItem 
         {
             Key = ThreadDbKey + x.MessageId,
             Timestamp = DateTimeOffset.UtcNow,
@@ -101,6 +108,15 @@ internal class MyChatMessageStore : ChatMessageStore
             SerializedMessage = JsonSerializer.Serialize(x),
             MessageText = x.Text
         }), cancellationToken);
+        if (context.ResponseMessages != null)
+            await collection.UpsertAsync(context.ResponseMessages.Select(x => new ChatHistoryItem
+            {
+                Key = ThreadDbKey + x.MessageId,
+                Timestamp = DateTimeOffset.UtcNow,
+                ThreadId = ThreadDbKey,
+                SerializedMessage = JsonSerializer.Serialize(x),
+                MessageText = x.Text
+            }), cancellationToken);
     }
 
     public override JsonElement Serialize(JsonSerializerOptions? jsonSerializerOptions = null) =>

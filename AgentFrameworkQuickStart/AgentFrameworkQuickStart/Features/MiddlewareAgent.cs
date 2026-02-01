@@ -48,6 +48,7 @@ public class MiddlewareAgent
     {
         Console.WriteLine($"Request Message Count: {messages.Count()}");
         var response = await innerChatClient.GetResponseAsync(messages, options, cancellationToken);
+        Console.WriteLine($"Response Message about to be delivered : {response.Messages.Last()}");
         Console.WriteLine($"Response Message Count: {response.Messages.Count}");
 
         return response;

@@ -32,14 +32,16 @@ public static class SimpleSequentialWorkflow
 internal sealed class ReverseTextExecutor() : Executor<string, string>("ReverseTextExecutor")
 {
 
-    public override ValueTask<string> HandleAsync(string message, IWorkflowContext context)
+    public override ValueTask<string> HandleAsync(string message, IWorkflowContext context,
+        CancellationToken cancellationToken = new CancellationToken())
     {
         return ValueTask.FromResult(new string(message.Reverse().ToArray()));
     }
 }
 internal sealed class UppercaseExecutor() : Executor<string, string>("UppercaseExecutor")
 {
-    public override ValueTask<string> HandleAsync(string message, IWorkflowContext context)
+    public override ValueTask<string> HandleAsync(string message, IWorkflowContext context,
+        CancellationToken cancellationToken = new CancellationToken())
     {
         return new ValueTask<string>(message.ToUpperInvariant());
     }

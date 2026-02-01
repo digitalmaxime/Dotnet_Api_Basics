@@ -30,7 +30,10 @@ public class RAGAgent
         
         RAGSearchTool searchTool = new(collection);
         
-        var agent = client.GetChatClient(deploymentName).CreateAIAgent(
+        var chatClient = client.GetChatClient(deploymentName).AsIChatClient();
+        
+        var agent = new ChatClientAgent(
+            chatClient,
             name: "Grocery food item agent",
             instructions: "You are a grocery food item manager agent",
             tools: [searchTool.SearchTool]
@@ -41,10 +44,6 @@ public class RAGAgent
         
         Console.WriteLine();
         Console.WriteLine("\rEmbedding complete... Let's ask the question again using RAG");
-        
-        // var response = await agent.RunAsync("Tell me a what day it is in a surprising way");
-        // Console.WriteLine(response);
-        // Console.WriteLine(response.Usage?.TotalTokenCount.ToString());
         Console.WriteLine();
 
     }

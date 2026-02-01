@@ -4,8 +4,6 @@ using AgentFrameworkQuickStart.Tools;
 using Azure;
 using Azure.AI.OpenAI;
 using Microsoft.Agents.AI;
-using Microsoft.Agents.AI.Hosting;
-using Microsoft.Agents.AI.Hosting.A2A;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +17,7 @@ public class A2AAgent
     public static async Task Call(string endpoint, string deploymentName, string apiKey)
     {
         Console.WriteLine("--- A2A Agent ---");
-        var pizzaAgentEndpoint = "http://localhost:5001";
+        var pizzaAgentBaseUrl = "http://localhost:5001";
 
         /*
         using var httpClient = new HttpClient();
@@ -52,7 +50,15 @@ public class A2AAgent
         Console.WriteLine(result);
         */
 
-        A2ACardResolver agentCardResolver = new(new Uri("https://your-a2a-agent-host"));
-        AIAgent agent = await agentCardResolver.GetAIAgentAsync();
+        A2ACardResolver agentCardResolver = new(new Uri(pizzaAgentBaseUrl));
+        // Step 2: Get the remote A2A agent (automatically discovers from /.well-known/agent.json)
+        AIAgent pizzaAgent = await agentCardResolver.GetAIAgentAsync();
+        
+        Console.WriteLine($"Connected to remote agent: {pizzaAgent.Name}");
+        // Step 3: Interact directly with the remote pizza agent
+        var response = await pizzaAgent.RunAsync("I'd like to order a large pepperoni pizza");
+        
+        Console.WriteLine($"Pizza Agent Response: {response}");
+        Console.WriteLine();
     }
 }

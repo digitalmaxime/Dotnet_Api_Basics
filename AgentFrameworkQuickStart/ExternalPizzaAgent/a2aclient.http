@@ -28,6 +28,10 @@ GET {{baseAddress}}/openapi/v1.json
 
 GET {{baseAddress}}/.well-known/agent-card.json
 
+### Open api documentation
+
+GET {{baseAddress}}/.well-known/agent.json
+
 ### Get Agent Card
 GET {{baseAddress}}/a2a/pizza/v1/card
 

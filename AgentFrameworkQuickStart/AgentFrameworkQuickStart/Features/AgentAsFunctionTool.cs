@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.AI.OpenAI;
 using Microsoft.Agents.AI;
+using Microsoft.Extensions.AI;
 using OpenAI;
 using OpenAI.Chat;
 
@@ -13,15 +14,18 @@ public static class AgentAsFunctionTool
     {
         Console.WriteLine("--- Agent as Function Tool ---");
         
-        AIAgent mainAgent = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey))
+        var client = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey))
             .GetChatClient(deploymentName)
-            .CreateAIAgent(
+            .AsIChatClient();
+            
+            var agent = new ChatClientAgent(
+                chatClient: client,
                 name: "MainAgent",
                 instructions: "You are a helpful assistant who responds in French.",
                 tools: [toolAgent.AsAIFunction()]
             );
 
-        var response = await mainAgent.RunAsync("Tell me the current date and time.");
+        var response = await agent.RunAsync("Tell me the current date and time.");
         Console.WriteLine(response);
         Console.WriteLine();
 

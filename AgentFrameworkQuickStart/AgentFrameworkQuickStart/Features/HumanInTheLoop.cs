@@ -18,17 +18,21 @@ public static class HumanInTheLoop
         var weatherFunction = AIFunctionFactory.Create(GeneralTools.GetWeather);
         var approvalRequiredWeatherFunction = new ApprovalRequiredAIFunction(weatherFunction);
 
-        AIAgent agent = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey))
+        var client = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey))
             .GetChatClient(deploymentName)
-            .CreateAIAgent(
+            .AsIChatClient();
+            
+        var agent = new ChatClientAgent(
+                chatClient: client,
                 name: "UtilityToolAgent",
                 instructions:
                 "You are a utility assistant that can get the current date/time. When asked for this information, use your available tools.",
                 description: "An agent that can get the current date/time.",
                 tools: [approvalRequiredWeatherFunction, AIFunctionFactory.Create(GeneralTools.GetDateTime)]
             );
-        AgentThread thread = agent.GetNewThread();
-        AgentRunResponse response = await agent.RunAsync("What is the weather like in Amsterdam?", thread);
+        
+        AgentSession session = await agent.GetNewSessionAsync();
+        var response = await agent.RunAsync("What is the weather like in Amsterdam?", session);
         var functionApprovalRequests = response.Messages
             .SelectMany(x => x.Contents)
             .OfType<FunctionApprovalRequestContent>()
@@ -40,7 +44,7 @@ public static class HumanInTheLoop
             FunctionApprovalRequestContent requestContent = functionApprovalRequests.First();
             Console.WriteLine($"We require approval to execute '{requestContent.FunctionCall.Name}'");
             var approvalMessage = new ChatMessage(ChatRole.User, [requestContent.CreateResponse(true)]);
-            Console.WriteLine(await agent.RunAsync(approvalMessage, thread));
+            Console.WriteLine(await agent.RunAsync(approvalMessage, session));
         }
 
         Console.WriteLine();

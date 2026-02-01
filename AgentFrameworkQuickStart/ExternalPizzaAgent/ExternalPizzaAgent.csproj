@@ -4,18 +4,15 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <UserSecretsId>afb1f588-79e4-4c2e-bd5a-c1b8671e355c</UserSecretsId>
     </PropertyGroup>
 
     <!--  AI   -->
     <ItemGroup>
-        <PackageReference Include="Microsoft.Agents.AI.Hosting.A2A" Version="1.0.0-preview.251219.1" />
-        <PackageReference Include="Microsoft.Agents.AI.Hosting.A2A.AspNetCore" Version="1.0.0-preview.251219.1" />
-        <PackageReference Include="Microsoft.Agents.AI.Workflows" Version="1.0.0-preview.251219.1" />
+        <PackageReference Include="Microsoft.Agents.AI.Hosting.A2A" Version="1.0.0-preview.260128.1" />
+        <PackageReference Include="Microsoft.Agents.AI.Hosting.A2A.AspNetCore" Version="1.0.0-preview.260128.1" />
         <PackageReference Include="Azure.AI.OpenAI" Version="2.7.0-beta.2" />
-        <PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.0.0-preview.251204.1" />
-        <PackageReference Include="Microsoft.SemanticKernel.Connectors.InMemory" Version="1.68.0-preview" />
-        <PackageReference Include="Microsoft.SemanticKernel.Connectors.PgVector" Version="1.68.0-preview" />
-        <PackageReference Include="ModelContextProtocol" Version="0.5.0-preview.1" />
+        <PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.0.0-preview.260128.1" />
     </ItemGroup>
 
 
@@ -29,14 +26,5 @@
         <PackageReference Include="Testcontainers" Version="4.10.0" />
         <PackageReference Include="Testcontainers.PostgreSql" Version="4.10.0" />
     </ItemGroup>
-
-
-    <ItemGroup>
-        <None Update="appsettings.private.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Include="appsettings.private.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
+    
 </Project>
