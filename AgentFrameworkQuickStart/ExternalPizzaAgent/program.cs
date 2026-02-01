@@ -2,6 +2,8 @@
 using A2A.AspNetCore;
 using Azure;
 using Azure.AI.OpenAI;
+using ExternalPizzaAgent.Tools;
+using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,10 +31,16 @@ IChatClient chatClient = new AzureOpenAIClient(
     .GetChatClient(deploymentName)
     .AsIChatClient();
 
-builder.Services.AddSingleton(chatClient);
+var agent = new ChatClientAgent(
+    chatClient, 
+    instructions: "You are a pizza ordering agent. Speak like a stereotypical italian pizza chef." +
+                  " Always start with 'Mama mia! '" +
+                  "When asked for a pizza, call the 'Order Pizza' tool.",
+    name: "Pizza Agent",
+    description: "An agent that manage pizza ordering",
+    tools: [AIFunctionFactory.Create(OrderPizzaTool.OrderPizza)]);
 
-var pizzaAgent = builder.AddAIAgent("pizza-agent",
-    instructions: "You are a pizza ordering agent. Speak like a stereotypical italian pizza chef.");
+builder.Services.AddSingleton(chatClient);
 
 var app = builder.Build();
 
@@ -42,12 +50,11 @@ var agentCard = new AgentCard()
 {
     Name = "Pizza Agent",
     Description = "An agent that manage pizza ordering",
-    Version = "1.0"
+    Version = "1.0",
+    Url = "http://localhost:5001/a2a/pizza"
 };
 
 // Expose the agent via A2A protocol.
-app.MapA2A(pizzaAgent, path: "/a2a/pizza", agentCard
-    , taskManager => app.MapWellKnownAgentCard(taskManager, "/")
-    );
+app.MapA2A(agent, path: "/a2a/pizza", agentCard, taskManager => app.MapWellKnownAgentCard(taskManager, "/"));
 
 await app.RunAsync();
