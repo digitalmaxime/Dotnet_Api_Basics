@@ -1,0 +1,33 @@
+@baseAddress = http://localhost:5001
+
+### Send A2A request to the pizza agent
+POST {{baseAddress}}/a2a/pizza/v1/message:stream
+Content-Type: application/json
+
+{
+  "message": {
+    "kind": "message",
+    "role": "user",
+    "parts": [
+      {
+        "kind": "text",
+        "text": "Order me a pizza",
+        "metadata": {}
+      }
+    ],
+	"messageId": null,
+    "contextId": "foo"
+  }
+}
+
+### Open api documentation
+
+GET {{baseAddress}}/openapi/v1.json
+
+### Open api documentation
+
+GET {{baseAddress}}/.well-known/agent-card.json
+
+### Get Agent Card
+GET {{baseAddress}}/a2a/pizza/v1/card
+

@@ -28,12 +28,16 @@ public static class StructuredOutput
             .CreateAIAgent(new ChatClientAgentOptions()
             {
                 Name = "HelpfulAssistant",
-                ChatOptions = chatOptions
+                ChatOptions = chatOptions,
+                Description = "Chat agent that get information about people"
             });
+        
         var response = 
             await structuredOutputAgent.RunAsync(
-                "Please provide information about John Smith, who is a 35-year-old software engineer.");
+                "Please provide information about John Doe, who is a 35-year-old software engineer.");
+        
         var personInfo = response.Deserialize<PersonInfo>(JsonSerializerOptions.Web);
+        
         Console.WriteLine($"Name: {personInfo.Name}, Age: {personInfo.Age}, Occupation: {personInfo.Occupation}");
         Console.WriteLine();
 
