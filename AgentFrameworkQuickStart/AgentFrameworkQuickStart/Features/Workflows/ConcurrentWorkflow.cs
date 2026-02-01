@@ -38,11 +38,12 @@ public static class ConcurrentWorkflow
         // Build the workflow by adding executors and connecting them
         var workflow = new WorkflowBuilder(startExecutor)
             .AddFanOutEdge(startExecutor, targets: [physicist, chemist])
-            .AddFanInEdge([physicist, chemist], aggregationExecutor)
+            .AddFanInEdge(physicist, aggregationExecutor)
+            .AddFanInEdge(chemist, aggregationExecutor)
             .WithOutputFrom(aggregationExecutor)
             .Build();
         // Execute the workflow in streaming mode
-        await using StreamingRun run = await InProcessExecution.StreamAsync(workflow, "What is temperature?");
+        StreamingRun run = await InProcessExecution.StreamAsync(workflow, "What is temperature?");
         await foreach (WorkflowEvent evt in run.WatchStreamAsync())
         {
             if (evt is WorkflowOutputEvent output)
@@ -62,14 +63,14 @@ internal sealed class ConcurrentStartExecutor() : Executor<string>("ConcurrentSt
     /// Starts the concurrent processing by sending messages to the agents.
     /// </summary>
     /// <returns>A task representing the asynchronous operation</returns>
-    public override async ValueTask HandleAsync(string message, IWorkflowContext context, CancellationToken cancellationToken = default)
+    public async override ValueTask HandleAsync(string message, IWorkflowContext context)
     {
         // Broadcast the message to all connected agents. Receiving agents will queue
         // the message but will not start processing until they receive a turn token.
-        await context.SendMessageAsync(new ChatMessage(ChatRole.User, message), cancellationToken);
+        await context.SendMessageAsync(new ChatMessage(ChatRole.User, message));
 
         // Broadcast the turn token to kick off the agents.
-        await context.SendMessageAsync(new TurnToken(emitEvents: true), cancellationToken);
+        await context.SendMessageAsync(new TurnToken(emitEvents: true));
     }
 }
 
@@ -85,7 +86,7 @@ internal sealed class ConcurrentAggregationExecutor() :
     /// Handles incoming messages from the agents and aggregates their responses.
     /// </summary>
     /// <returns>A task representing the asynchronous operation</returns>
-    public override async ValueTask HandleAsync(List<ChatMessage> message, IWorkflowContext context, CancellationToken cancellationToken = default)
+    public override async ValueTask HandleAsync(List<ChatMessage> message, IWorkflowContext context)
     {
         _messages.AddRange(message);
 
@@ -93,7 +94,7 @@ internal sealed class ConcurrentAggregationExecutor() :
         {
             var formattedMessages = string.Join(Environment.NewLine,
                 _messages.Select(m => $"{m.AuthorName}: {m.Text}"));
-            await context.YieldOutputAsync(formattedMessages, cancellationToken);
+            await context.YieldOutputAsync(formattedMessages);
         }
     }
 }

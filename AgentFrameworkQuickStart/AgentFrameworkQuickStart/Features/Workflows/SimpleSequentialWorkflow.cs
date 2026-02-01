@@ -16,7 +16,7 @@ public static class SimpleSequentialWorkflow
         var workflow = builder.Build();
         
         // Execute the workflow with input data
-        await using Run run = await InProcessExecution.RunAsync(workflow, "Hello, World!");
+        Run run = await InProcessExecution.RunAsync(workflow, "Hello, World!");
         foreach (WorkflowEvent evt in run.NewEvents)
         {
             switch (evt)
@@ -31,15 +31,16 @@ public static class SimpleSequentialWorkflow
 
 internal sealed class ReverseTextExecutor() : Executor<string, string>("ReverseTextExecutor")
 {
-    public override ValueTask<string> HandleAsync(string input, IWorkflowContext context, CancellationToken cancellationToken = default)
+
+    public override ValueTask<string> HandleAsync(string message, IWorkflowContext context)
     {
-        return ValueTask.FromResult(new string(input.Reverse().ToArray()));
+        return ValueTask.FromResult(new string(message.Reverse().ToArray()));
     }
 }
 internal sealed class UppercaseExecutor() : Executor<string, string>("UppercaseExecutor")
 {
-    public override ValueTask<string> HandleAsync(string input, IWorkflowContext context, CancellationToken cancellationToken = default)
+    public override ValueTask<string> HandleAsync(string message, IWorkflowContext context)
     {
-        return new ValueTask<string>(input.ToUpperInvariant());
+        return new ValueTask<string>(message.ToUpperInvariant());
     }
 }
