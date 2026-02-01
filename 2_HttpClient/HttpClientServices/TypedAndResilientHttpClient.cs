@@ -4,8 +4,8 @@ using _2_WebHttpClientDemo.Model;
 namespace _2_WebHttpClientDemo.HttpClientServices;
 /*
 * In order for DI to work '
-*    Services.AddHttpClient<TypedHttpClient>
-*    [FromServices] TypedHttpClient client
+*    Services.AddHttpClient<TypedHttpClient>(...);
+*    ([FromServices] TypedHttpClient lient) => await client.GetBlogsAsync())
 * class 'TypedHttpClient' must have a constructor with parameter HttpClient
 */
 public class TypedAndResilientHttpClient(HttpClient httpClient) 

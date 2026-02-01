@@ -45,7 +45,7 @@ There are several ways IHttpClientFactory can be used in an app:
 
 - `Microsoft.Extensions.Http`
 - `Refit.HttpClientFactory` (optional)
-- `Microsoft.Extensions.Http.Resilience` for retry policies
+- `Microsoft.Extensions.Http.Resilience` for retry policies (introduced in .NET 8)
 
 ### Best Practices
 
