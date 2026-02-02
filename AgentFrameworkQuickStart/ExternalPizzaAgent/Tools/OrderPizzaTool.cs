@@ -5,9 +5,9 @@ namespace ExternalPizzaAgent.Tools;
 public static class OrderPizzaTool
 {
     [Description("Use this function to order pizza")]
-    public static string OrderPizza ()
+    public static string OrderPizza()
     {
         Console.WriteLine("--- Order Pizza Tool Call ---");
-        return "Pizza ordered!";
+        return Random.Shared.Next(2) == 0 ? "Pizza not available" : "Pizza ordered!";
     }
 }
