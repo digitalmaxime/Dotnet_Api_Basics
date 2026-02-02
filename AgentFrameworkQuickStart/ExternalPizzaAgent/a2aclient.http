@@ -20,10 +20,6 @@ Content-Type: application/json
   }
 }
 
-### Open api documentation
-
-GET {{baseAddress}}/openapi/v1.json
-
 ### Get Agent Card through .well-known path
 
 GET {{baseAddress}}/.well-known/agent-card.json
