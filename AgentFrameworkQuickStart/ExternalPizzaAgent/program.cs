@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder();
 const string baseUrl = "http://localhost:5001";
 builder.WebHost.UseUrls(baseUrl);
 builder.Configuration.AddUserSecrets<Program>(optional: true);
+builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
 
 var endpoint = builder.Configuration["AzureOpenAI:Endpoint"]!;
 var deploymentName = builder.Configuration["AzureOpenAI:DeploymentName"]!;

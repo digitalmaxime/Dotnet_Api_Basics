@@ -1,19 +1,12 @@
-using System.Net.Http.Json;
 using A2A;
-using AgentFrameworkQuickStart.Tools;
 using Azure;
 using Azure.AI.OpenAI;
 using Microsoft.Agents.AI;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.AI;
-using Microsoft.Extensions.DependencyInjection;
-using OpenAI;
-using Microsoft.AspNetCore.OpenApi;
-using Microsoft.Extensions.Logging;
 
 namespace AgentFrameworkQuickStart.Features.A2A;
 
-public class A2AAgent
+public static class A2AAgent
 {
     public static async Task Call(string endpoint, string deploymentName, string apiKey)
     {
@@ -54,9 +47,12 @@ public class A2AAgent
 
         var session = await agent.GetNewSessionAsync();
         var response0 = await agent.RunAsync("Call OrderPizza with ‘large pepperoni’ now.");
+        Console.WriteLine(response0);
+        Console.WriteLine();
+
         do
         {
-            Console.WriteLine(">");
+            Console.Write("> ");
             var input = Console.ReadLine();
             if (input == "exit" || string.IsNullOrEmpty(input)) break;
             var response = await agent.RunAsync(input, session);

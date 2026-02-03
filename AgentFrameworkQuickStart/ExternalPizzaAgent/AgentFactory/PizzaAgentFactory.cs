@@ -97,10 +97,14 @@ public class PizzaAgentFactory
         IServiceProvider sp,
         CancellationToken cancellationToken)
     {
+        var timeProvider = sp.GetRequiredService<TimeProvider>();
+        var start = timeProvider.GetTimestamp();
         var logger = sp.GetRequiredService<ILogger<PizzaAgentFactory>>();
         logger.LogInformation($"Agent Run Middleware before");
         var response = await innerAgent.RunAsync(messages, session, options, cancellationToken).ConfigureAwait(false);
         logger.LogInformation($"Agent Run Middleware after\n");
+        var elapsed = timeProvider.GetElapsedTime(start);
+        logger.LogInformation("Total token usage: {TokenUsage}\tTime taken: {TimeTaken} seconds", response.Usage?.TotalTokenCount, elapsed.TotalSeconds);
         return response;
     }
 }
