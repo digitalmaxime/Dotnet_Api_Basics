@@ -39,6 +39,6 @@ var apiKey = configuration["AzureOpenAI:ApiKey"]!;
 
 // await RAGAgent.Call(endpoint, deploymentName, apiKey, configuration); // WIP
 
-await MiddlewareAgent.Call(endpoint, deploymentName, apiKey);
+// await MiddlewareAgent.Call(endpoint, deploymentName, apiKey);
 
-// await A2AAgent.Call(endpoint, deploymentName, apiKey);
+await A2AAgent.Call(endpoint, deploymentName, apiKey);

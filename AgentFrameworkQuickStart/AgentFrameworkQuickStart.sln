@@ -4,8 +4,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentFrameworkQuickStart", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalPizzaAgent", "ExternalPizzaAgent\ExternalPizzaAgent.csproj", "{EE3C79BF-471F-4A16-8634-F79FD4C27374}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalSushiAgent", "ExternalSushiAgent\ExternalSushiAgent.csproj", "{0C140C12-66E8-4EAA-A25E-D82908CF3D04}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,9 +18,5 @@ Global
 		{EE3C79BF-471F-4A16-8634-F79FD4C27374}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE3C79BF-471F-4A16-8634-F79FD4C27374}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE3C79BF-471F-4A16-8634-F79FD4C27374}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0C140C12-66E8-4EAA-A25E-D82908CF3D04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C140C12-66E8-4EAA-A25E-D82908CF3D04}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0C140C12-66E8-4EAA-A25E-D82908CF3D04}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C140C12-66E8-4EAA-A25E-D82908CF3D04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

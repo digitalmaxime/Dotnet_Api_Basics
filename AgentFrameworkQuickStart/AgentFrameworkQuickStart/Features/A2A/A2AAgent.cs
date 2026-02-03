@@ -22,16 +22,13 @@ public class A2AAgent
         var pizzaAgentBaseUrl = "http://localhost:5001";
         A2ACardResolver agentCardResolver = new(new Uri(pizzaAgentBaseUrl));
         // Get the remote A2A agent (automatically discovers from /.well-known/agent.json)
-        AIAgent pizzaAgent = await agentCardResolver.GetAIAgentAsync();
+        var pizzaAgent = await agentCardResolver.GetAIAgentAsync();
         Console.WriteLine($"Connected to remote agent: {pizzaAgent.Name}");
-        // Example: Interact directly with the remote pizza agent
-        // var response = await pizzaAgent.RunAsync("I'd like to order a large pepperoni pizza");
-
 
         var client = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey))
-            .GetChatClient(deploymentName).AsIChatClient();
-
-
+            .GetChatClient(deploymentName)
+            .AsIChatClient();
+        
         var chatClientAgentOptions = new ChatClientAgentOptions
         {
             Name = "Helpful Agent",
