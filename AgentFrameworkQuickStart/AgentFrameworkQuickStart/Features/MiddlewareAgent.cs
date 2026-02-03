@@ -30,27 +30,60 @@ public class MiddlewareAgent
             name: "MiddlewareAgent",
             instructions:
             "You are a utility assistant that can redirect to existing agents. When asked for this information, use your available tools.",
-            tools: []
-        );
+            tools: [AIFunctionFactory.Create(Tools.GeneralTools.GetDateTime)]
+        )
+            .AsBuilder()
+            .Use(CustomFunctionCallingMiddleware)
+            .Use(runFunc: CustomAgentRunMiddleware, runStreamingFunc: null)
+            .Build();
 
-        Console.WriteLine(await agent.RunAsync("Tell me a what day it is in a surprising way"));
+        Console.WriteLine(await agent.RunAsync("What time is it?"));
         Console.WriteLine();
 
         return agent;
     }
 
 
-    static async Task<ChatResponse> CustomChatClientMiddleware(
+    /* IChatClient middleware */
+    private static async Task<ChatResponse> CustomChatClientMiddleware(
         IEnumerable<ChatMessage> messages,
         ChatOptions? options,
         IChatClient innerChatClient,
         CancellationToken cancellationToken)
     {
-        Console.WriteLine($"Request Message Count: {messages.Count()}");
+        Console.WriteLine($"\tIChatClient middleware before");
         var response = await innerChatClient.GetResponseAsync(messages, options, cancellationToken);
-        Console.WriteLine($"Response Message about to be delivered : {response.Messages.Last()}");
-        Console.WriteLine($"Response Message Count: {response.Messages.Count}");
+        Console.WriteLine($"\tIChatClient middleware after : about to be deliver : {response.Messages.Last()}");
 
         return response;
     }
+    
+    /* Function calling middleware */
+    private static async ValueTask<object?> CustomFunctionCallingMiddleware(
+        AIAgent agent,
+        FunctionInvocationContext context,
+        Func<FunctionInvocationContext, CancellationToken, ValueTask<object?>> next,
+        CancellationToken cancellationToken)
+    {
+        Console.WriteLine($"\t\tFunction calling middleware before - Function Name: {context!.Function.Name}");
+        var result = await next(context, cancellationToken);
+        Console.WriteLine($"\t\tFunction calling middleware after - Function Call Result: {result}");
+
+        return result;
+    }
+    
+    /* Agent Run Middleware */
+    private static async Task<AgentResponse> CustomAgentRunMiddleware(
+        IEnumerable<ChatMessage> messages,
+        AgentSession? session,
+        AgentRunOptions? options,
+        AIAgent innerAgent,
+        CancellationToken cancellationToken)
+    {
+        Console.WriteLine($"Agent Run Middleware before");
+        var response = await innerAgent.RunAsync(messages, session, options, cancellationToken).ConfigureAwait(false);
+        Console.WriteLine($"Agent Run Middleware after\n");
+        return response;
+    }
+    
 }

@@ -14,6 +14,6 @@ public static class GeneralTools
     public static string GetDateTime()
     {
         var date = DateTimeOffset.UtcNow.ToString(UtcDateTimeFormat);
-        return $"The current utc date time is {DateTimeOffset.UtcNow:UtcDateTimeFormat}";
+        return $"The current utc date time is {date}";
     }
 }

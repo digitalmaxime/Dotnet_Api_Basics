@@ -13,7 +13,7 @@ var deploymentName = builder.Configuration["AzureOpenAI:DeploymentName"]!;
 var apiKey = builder.Configuration["AzureOpenAI:ApiKey"]!;
 
 var hostedAgentBuilder = builder.Services.AddAIAgent(PizzaAgentFactory.PizzaAgentName,
-    (sp, name) => PizzaAgentFactory.CreatePizzaAgent(endpoint, apiKey, deploymentName));
+    (sp, name) => PizzaAgentFactory.CreatePizzaAgent(endpoint, apiKey, deploymentName, sp));
 
 var app = builder.Build();
 

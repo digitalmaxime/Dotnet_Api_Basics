@@ -4,6 +4,23 @@ See [Microsoft Agent Framework](https://learn.microsoft.com/en-us/agent-framewor
 
 The ChatClientAgent is built on top of any IChatClient implementation. 
 
+## Table of content
+1) [Multi-turn conversation](#running-the-agent-with-a-multi-turn-conversation)
+2) [Structured output](#structured-output-with-agents)
+3) [Function tools](#using-function-tools-with-an-agent)
+4) [Human in the loop](#human-in-the-loop-approvals)
+5) [Agent as function tool](#agent-as-function-tool)
+6) [MCP](#expose-an-agent-as-an-mcp-tool)
+7) [Observability](#enabling-observability-for-agents)
+7) [Persistence](#persisting-and-resuming-agent-conversations)
+7) [Sequential workflow](#create-a-simple-sequential-workflow)
+7) [Middlewares](#middleware)
+7) [RAG](#create-rag-tooled-agent)
+7) [Agent to agent](#agent-to-agent)
+7) [A2A vs Agent as Tool](#A2a-vs-agent-as-tool)
+7) [Best Practices](#best-practices)
+
+
 ## Running the agent with a multi-turn conversation
 
 Agents are stateless and do not maintain any state internally between calls. 
@@ -11,25 +28,6 @@ To have a multi-turn conversation with an agent, you need to create an object
 using `GetNewThread` to hold the conversation state and pass this object to the agent when running it.
 
 `AgentThread thread = agent.GetNewThread();`
-
-## Using function tools with an agent
-
-You can turn any C# method into a function tool, by using the `AIFunctionFactory.Create`
-method to create an `AIFunction` instance from the method.
-
-## human in the loop approvals
-
-When using functions, it's possible to indicate for each function whether it requires human approval before being executed.
-This is done by wrapping the AIFunction instance in an ApprovalRequiredAIFunction instance.
-
-```csharp
-AIFunction weatherFunction = AIFunctionFactory.Create(GetWeather);
-AIFunction approvalRequiredWeatherFunction = new ApprovalRequiredAIFunction(weatherFunction);
-```
-
-Whenever you are using function tools with human in the loop approvals, remember to check for 
-FunctionApprovalRequestContent instances in the response, after each agent run, 
-until all function calls have been approved or rejected.
 
 ## Structured Output with Agents
 
@@ -44,6 +42,27 @@ This ChatOptions instance allows you to pick a preferred ChatResponseFormat.
 
 See [Create the agent with structured output](https://learn.microsoft.com/en-us/agent-framework/tutorials/agents/structured-output?pivots=programming-language-csharp#create-the-agent-with-structured-output)
 
+
+## Using function tools with an agent
+
+You can turn any C# method into a function tool, by using the `AIFunctionFactory.Create`
+method to create an `AIFunction` instance from the method.
+
+## Human in the loop approvals
+
+When using functions, it's possible to indicate for each function whether it requires human approval before being executed.
+This is done by wrapping the AIFunction instance in an ApprovalRequiredAIFunction instance.
+
+```csharp
+AIFunction weatherFunction = AIFunctionFactory.Create(GetWeather);
+AIFunction approvalRequiredWeatherFunction = new ApprovalRequiredAIFunction(weatherFunction);
+```
+
+Whenever you are using function tools with human in the loop approvals, remember to check for
+FunctionApprovalRequestContent instances in the response, after each agent run,
+until all function calls have been approved or rejected.
+
+
 ## Using an agent as a function tool
 
 You can use an `AIAgent` as a function tool by calling `.AsAIFunction()` 
@@ -53,9 +72,23 @@ This allows you to compose agents and build more advanced workflows.
 - Create a function tool as a C# method.
 - Create an agent that uses the function tool.
 - Create a main agent that uses the agent as a function tool.
-  - `tools: [weatherAgent.AsAIFunction()]`
+  
+
+Conceptually flattening an agent into a tool/function.
+The tool agent acts more like a stateless capability, like a Function, Plugin or Helper module.
+
+Key characteristics :
+- Invoked like a function call
+- Synchronous execution
+- Stateless (typically)
+- Executed on the same process / thread
+- Used for deterministic tasks with narrow expertise
+
+`tools: [toolAgent.AsAIFunction()]`
 
 See [Create a workflow with multiple agents](https://learn.microsoft.com/en-us/agent-framework/tutorials/agents/agent-as-function-tool?pivots=programming-language-csharp#create-and-use-an-agent-as-a-function-tool)
+
+
 
 ## Expose an agent as an MCP tool
 
@@ -232,6 +265,23 @@ packages `dotnet add package Microsoft.Agents.AI.Workflows --prerelease`
 
 See [Create a Simple Sequential Workflow](https://learn.microsoft.com/en-us/agent-framework/tutorials/workflows/simple-sequential-workflow?pivots=programming-language-csharp#overview)
 
+
+## Middleware
+
+Middleware in Agent Framework provides a powerful way to intercept, modify, and enhance agent interactions at various stages of execution. You can use middleware to implement cross-cutting concerns such as logging, security validation, error handling, and result transformation without modifying your core agent or function logic.
+
+Agent Framework can be customized using three different types of middleware:
+
+- Agent Run middleware: Allows interception of all agent runs, so that input and output can be inspected and/or modified as needed.
+  - can be registered on an agent `agent.AsBuilder().Use(runFunc: customAgentRunMiddleware, runStreamingFunc: null)`
+- Function calling middleware: Allows interception of all function calls executed by the agent, so that input and output can be inspected and modified as needed.
+  - can be registered on an agent `agent.AsBuilder().Use(CustomFunctionCallingMiddleware)`
+- IChatClient middleware: Allows interception of calls to an IChatClient implementation, where an agent is using IChatClient for inference calls, for example, when using ChatClientAgent.
+  - can be registered on an IChatClient before it is used with a ChatClientAgent `chatClient.AsBuilder().Use(getResponseFunc: chatClientMiddleware, getStreamingResponseFunc: null)`
+
+see [User guide middleware](https://learn.microsoft.com/en-us/agent-framework/user-guide/agents/agent-middleware?pivots=programming-language-csharp) and [Tutorials middleware](https://learn.microsoft.com/en-us/agent-framework/tutorials/agents/middleware?pivots=programming-language-csharp)
+
+
 ## Create RAG tooled agent
 
 Retrieval Augmented Generation, RAG for short, can be achieved in MS Agent Framework using
@@ -239,21 +289,6 @@ vector embedding.
 
 packages `Microsoft.SemanticKernel.Connectors.PgVector` or `Microsoft.SemanticKernel.Connectors.InMemory`
 
-
-## Agent as Function Tool
-
-Conceptually flattening an agent into a tool/function. 
-
-The tool agent acts more like a stateless capability, like a Function, Plugin or Helper module.
-
-Key characteristics : 
-- Invoked like a function call
-- Synchronous eexecution
-- Stateless (typically)
-- Executed on the same process / thread
-- Used for deterministic tasks with narrow expertise
-
-`tools: [toolAgent.AsAIFunction()]`
 
 ## Agent to Agent
 
